@@ -1,0 +1,257 @@
+<?php
+$page_title = 'Xafladiya - Contact Us';
+include '../includes/header.php';
+?>
+
+<!-- Contact Hero Section -->
+<section class="contact-hero-section py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <h1 class="display-4 fw-bold mb-4">Get In Touch</h1>
+        <p class="lead mb-4">
+          We'd love to hear from you. Let us know how we can help with your
+          event planning needs.
+        </p>
+        <div class="contact-info mb-4">
+          <div class="d-flex align-items-center mb-3">
+            <div class="contact-icon me-3">
+              <i class="fas fa-map-marker-alt fa-fw"></i>
+            </div>
+            <div>
+              <h5 class="mb-0">Visit Us</h5>
+              <p class="mb-0">123 Main Street, Garowe, Puntland, Somalia</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-center mb-3">
+            <div class="contact-icon me-3">
+              <i class="fas fa-envelope fa-fw"></i>
+            </div>
+            <div>
+              <h5 class="mb-0">Email Us</h5>
+              <p class="mb-0">info@xafladia.com</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-center mb-3">
+            <div class="contact-icon me-3">
+              <i class="fas fa-phone fa-fw"></i>
+            </div>
+            <div>
+              <h5 class="mb-0">Call Us</h5>
+              <p class="mb-0">+252 907 123456</p>
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="contact-icon me-3">
+              <i class="fas fa-clock fa-fw"></i>
+            </div>
+            <div>
+              <h5 class="mb-0">Office Hours</h5>
+              <p class="mb-0">
+                Monday - Friday: 9am - 5pm<br />Saturday: 10am - 3pm
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="social-media mb-4">
+          <h5>Connect With Us</h5>
+          <div class="d-flex">
+            <a href="#" class="social-link me-2">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="social-link me-2">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="social-link me-2">
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a href="#" class="social-link me-2">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="social-link">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card border-0 shadow">
+          <div class="card-body p-4">
+            <h3 class="card-title mb-4">Send Us a Message</h3>
+            <form id="contactForm" action="process_contact.php" method="POST">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="name" class="form-label">Your Name*</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="name"
+                      name="name"
+                      placeholder="Enter your name"
+                      required
+                    />
+                    <div class="invalid-feedback">
+                      Please enter your name
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="email" class="form-label">Your Email*</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="Enter your email"
+                      required
+                    />
+                    <div class="invalid-feedback">
+                      Please enter a valid email
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group mt-3">
+                <label for="phone" class="form-label">Your Phone</label>
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="phone"
+                  name="phone"
+                  placeholder="Enter your phone number"
+                />
+              </div>
+              <div class="form-group mt-3">
+                <label for="subject" class="form-label">Subject*</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="subject"
+                  name="subject"
+                  placeholder="Enter message subject"
+                  required
+                />
+                <div class="invalid-feedback">Please enter a subject</div>
+              </div>
+              <div class="form-group mt-3">
+                <label for="message" class="form-label">Message*</label>
+                <textarea
+                  class="form-control"
+                  id="message"
+                  name="message"
+                  rows="5"
+                  placeholder="Enter your message"
+                  required
+                ></textarea>
+                <div class="invalid-feedback">
+                  Please enter your message
+                </div>
+              </div>
+              <div class="form-check mt-3">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="newsletter"
+                  name="newsletter"
+                />
+                <label class="form-check-label" for="newsletter">
+                  Subscribe to our newsletter
+                </label>
+              </div>
+              <div class="mt-4">
+                <button
+                  type="submit"
+                  id="submitContactForm"
+                  class="btn btn-primary px-4 py-2"
+                >
+                  Send Message
+                </button>
+              </div>
+              <div
+                class="mt-3 success-message"
+                id="contactSuccess"
+                style="display: none"
+              >
+                <div class="alert alert-success">
+                  <i class="fas fa-check-circle me-2"></i> Your message has
+                  been sent successfully. We'll get back to you shortly!
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Map Section -->
+<section class="map-section py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Find Us</h2>
+      <p class="lead">Visit our office in Garowe, Somalia</p>
+    </div>
+    <div class="map-container shadow rounded">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62876.90913944297!2d48.45054864357782!3d8.404498747978196!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3d87302a8bee7379%3A0x66a2d9c6f41eb4b9!2sGarowe%2C%20Somalia!5e0!3m2!1sen!2sus!4v1654321098765!5m2!1sen!2sus"
+        width="100%"
+        height="450"
+        style="border: 0; border-radius: 8px"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+    </div>
+    <div class="text-center mt-4">
+      <a
+        href="https://goo.gl/maps/YourActualGoogleMapsLink"
+        target="_blank"
+        rel="noopener"
+        class="btn btn-primary"
+        >Get Directions</a
+      >
+    </div>
+  </div>
+</section>
+
+<?php include '../includes/footer.php'; ?>
+
+<!-- Custom JS -->
+<script>
+$(document).ready(function() {
+  // Form validation
+  $('#contactForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    // Basic form validation
+    var isValid = true;
+    $(this).find('[required]').each(function() {
+      if (!$(this).val()) {
+        isValid = false;
+        $(this).addClass('is-invalid');
+      } else {
+        $(this).removeClass('is-invalid');
+      }
+    });
+    
+    if (isValid) {
+      // Submit form via AJAX
+      $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+          $('#contactSuccess').show();
+          $('#contactForm')[0].reset();
+        },
+        error: function() {
+          alert('An error occurred. Please try again later.');
+        }
+      });
+    }
+  });
+});
+</script> 
