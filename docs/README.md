@@ -62,7 +62,7 @@ xafladia/
 1. Clone the repository
 
    ```bash
-   git clone https://github.com/your-username/xafladia.git
+   git clone https://https://github.com/koko-ahmed/xafladia.git
    cd xafladia
    ```
 

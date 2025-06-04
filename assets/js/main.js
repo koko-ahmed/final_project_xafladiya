@@ -2,40 +2,103 @@
  * Main JavaScript file for Xafladia
  */
 
-import { applyDarkMode, toggleDarkMode, smoothScrollTo, setActiveNavigation, equalizeHeights, debounce } from './utils.js';
-import { initializeLanguage } from './i18n.js';
-import { initForms } from './forms.js';
-import { loadCommonComponents } from './template-loader.js';
+// Utility functions
+function smoothScrollTo(selector) {
+    document.querySelectorAll(selector).forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            // Check if the link is a Bootstrap dropdown toggle
+            if (this.hasAttribute('data-bs-toggle') && this.getAttribute('data-bs-toggle') === 'dropdown') {
+                // If it's a dropdown toggle, do nothing and let Bootstrap handle it
+                return;
+            }
+
+            const href = this.getAttribute('href');
+
+            // Original smooth scroll logic for non-dropdown links
+            if (href.startsWith('#') && href.length > 1) {
+                e.preventDefault();
+                const targetId = href.substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    });
+}
+
+function setActiveNavigation() {
+    const currentUrl = window.location.href;
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+
+        const href = link.getAttribute('href');
+        if (currentUrl.includes(href) && href !== 'index.html') {
+            link.classList.add('active');
+        } else if (currentUrl.endsWith('/') || currentUrl.endsWith('index.html')) {
+            document.querySelector('.nav-home').classList.add('active');
+        }
+    });
+}
+
+function equalizeHeights(selector) {
+    const elements = document.querySelectorAll(selector);
+    let maxHeight = 0;
+
+    // Reset heights
+    elements.forEach(el => {
+        el.style.height = 'auto';
+        const height = el.offsetHeight;
+        if (height > maxHeight) {
+            maxHeight = height;
+        }
+    });
+
+    // Apply max height
+    elements.forEach(el => {
+        el.style.height = maxHeight + 'px';
+    });
+}
+
+function debounce(func, wait = 100) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            func.apply(this, args);
+        }, wait);
+    };
+}
 
 /**
  * Initialize all functionality when DOM is loaded
  */
 document.addEventListener('DOMContentLoaded', function () {
-    // Load common components
-    loadCommonComponents()
-        .then(() => {
-            // Initialize app after components are loaded
-            initApp();
-        })
-        .catch(error => {
-            console.error('Error loading components:', error);
-        });
+    // Initialize all components
+    initBootstrapComponents();
+    initForms();
+    initGallery();
+    initAnimations();
+    initServiceBooking();
 });
 
 /**
  * Initialize the application
  */
 function initApp() {
-    // Initialize language support
-    initializeLanguage();
-
     // Set up smooth scrolling
     smoothScrollTo('a[href^="#"]');
 
     // Highlight active navigation
     setActiveNavigation();
 
-    // Initialize all forms
+    // Initialize forms
     initForms();
 
     // Equalize heights of elements
@@ -59,6 +122,30 @@ function initApp() {
 
     // Initialize page-specific functionality
     initPageSpecific();
+
+    // Initialize special button handling for hotel bookings
+    initHotelBookings();
+}
+
+/**
+ * Initialize hotel booking functionality
+ */
+function initHotelBookings() {
+    // Handle "Book Now" buttons in the hotels page
+    const bookNowButtons = document.querySelectorAll('.hotel-info .btn-primary');
+    bookNowButtons.forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            const hotelName = this.closest('.hotel-info').querySelector('.hotel-name').textContent;
+            console.log('Booking requested for:', hotelName);
+
+            // Scroll to booking section
+            const bookingSection = document.querySelector(this.getAttribute('href'));
+            if (bookingSection) {
+                bookingSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
 }
 
 /**
@@ -68,18 +155,23 @@ function initPageSpecific() {
     const url = window.location.href;
 
     // Services page functionality
-    if (url.includes('services.html')) {
+    if (url.includes('services.php')) {
         initServicesPage();
     }
 
     // Gallery page functionality
-    if (url.includes('gallery.html')) {
+    if (url.includes('gallery.php')) {
         initGalleryPage();
     }
 
     // CameraMan page functionality
-    if (url.includes('cameraman.html')) {
+    if (url.includes('cameraman.php')) {
         initCameramanPage();
+    }
+
+    // Hotels page functionality
+    if (url.includes('hotels.php')) {
+        console.log('Hotels page initialized');
     }
 }
 
@@ -183,12 +275,26 @@ document.addEventListener('DOMContentLoaded', function () {
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
+            // Check if the link is a Bootstrap dropdown toggle
+            if (this.hasAttribute('data-bs-toggle') && this.getAttribute('data-bs-toggle') === 'dropdown') {
+                // If it's a dropdown toggle, do nothing and let Bootstrap handle it
+                return;
+            }
+
+            const href = this.getAttribute('href');
+
+            // Original smooth scroll logic for non-dropdown links
+            if (href && href !== '#') {
+                e.preventDefault();
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            } else if (href === '#') {
+                // For href="#", do not prevent default, let Bootstrap handle it.
+                // No smooth scroll needed.
             }
         });
     });
@@ -220,16 +326,6 @@ function initDarkMode() {
 
 // Main JavaScript file for Xafladia
 
-// Initialize all functionality when DOM is loaded
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialize all components
-    initBootstrapComponents();
-    initForms();
-    initGallery();
-    initSmoothScroll();
-    initAnimations();
-});
-
 // Initialize Bootstrap Components
 function initBootstrapComponents() {
     // Tooltips
@@ -245,80 +341,45 @@ function initBootstrapComponents() {
     });
 
     // Initialize AOS animations
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+    }
+
+    // Initialize all dropdowns using Bootstrap's API
+    const dropdownElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+    dropdownElementList.map(function (dropdownToggleEl) {
+      return new bootstrap.Dropdown(dropdownToggleEl);
     });
 }
 
-// Form Handling
+/**
+ * Initialize forms functionality
+ */
 function initForms() {
-    // Contact Form
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            handleFormSubmit(this, 'contact');
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function (e) {
+            // Get form type from data attribute or form id
+            const formType = this.getAttribute('data-form-type') || this.id;
+            handleFormSubmit(this, formType);
         });
-    }
-
-    // Newsletter Form
-    const newsletterForm = document.getElementById('newsletterForm');
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            handleFormSubmit(this, 'newsletter');
-        });
-    }
-
-    // Booking Form
-    const bookingForm = document.getElementById('bookingForm');
-    if (bookingForm) {
-        bookingForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            handleFormSubmit(this, 'booking');
-        });
-    }
+    });
 }
 
-// Form Submission Handler
+/**
+ * Handle form submission
+ * @param {HTMLFormElement} form - The form element
+ * @param {string} type - Form type identifier
+ */
 function handleFormSubmit(form, type) {
-    // Show loading state
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
-    submitBtn.disabled = true;
+    // Basic form handling logic
+    console.log(`Form submission for ${type}`);
 
-    // Collect form data
-    const formData = new FormData(form);
-
-    // Add form type
-    formData.append('form_type', type);
-
-    // Send form data
-    fetch(form.action, {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showAlert('success', data.message || 'Form submitted successfully!');
-                form.reset();
-            } else {
-                showAlert('danger', data.message || 'Error submitting form. Please try again.');
-            }
-        })
-        .catch(error => {
-            showAlert('danger', 'An error occurred. Please try again later.');
-            console.error('Form submission error:', error);
-        })
-        .finally(() => {
-            // Reset button state
-            submitBtn.innerHTML = originalBtnText;
-            submitBtn.disabled = false;
-        });
+    // Default form processing can be added here
 }
 
 // Alert System
@@ -358,22 +419,6 @@ function initGallery() {
             const modal = new bootstrap.Modal(document.getElementById('galleryModal'));
             document.getElementById('modalImage').src = imgSrc;
             modal.show();
-        });
-    });
-}
-
-// Smooth Scroll
-function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
         });
     });
 }
@@ -425,7 +470,4 @@ function initServiceBooking() {
             }
         });
     });
-}
-
-// Initialize service booking
-initServiceBooking(); 
+} 

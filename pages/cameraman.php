@@ -2,6 +2,20 @@
 require_once '../config/config.php';
 $page_title = $site_name . ' - Professional Cameraman Services';
 include '../includes/header.php';
+require_once '../includes/db.php'; // Include the database connection
+
+// Fetch photographers from the database
+$photographers = [];
+$query = "SELECT id, name, specialty, contact_email, contact_phone, bio, image, location, years_experience, rating FROM photographers ORDER BY name";
+$result = mysqli_query($db, $query);
+
+if ($result) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $photographers[] = $row;
+    }
+    mysqli_free_result($result);
+}
+
 ?>
 
 <!-- Breadcrumb Navigation -->
@@ -16,7 +30,7 @@ include '../includes/header.php';
 </nav>
 
 <!-- Hero Section -->
-<section class="hero-section text-center">
+<section class="hero-section text-center bg-light-blue">
   <div class="container">
     <div class="row align-items-center">
       <div class="col-lg-6 text-lg-start" data-aos="fade-right">
@@ -25,8 +39,9 @@ include '../includes/header.php';
           Professional photography and videography services for your special
           events, delivered with creativity and precision
         </p>
-        <a href="#booking" class="btn btn-primary btn-lg px-4 me-md-2">Book Now</a>
-        <a href="#professionals" class="btn btn-outline-secondary btn-lg px-4">Meet Our Team</a>
+        <a href="#booking" class="btn btn-outline-primary btn-lg px-4 me-md-2">Book Now</a>
+<a href="#professionals" class="btn btn-outline-primary btn-lg px-4">Meet Our Team</a>
+
       </div>
       <div class="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left" data-aos-delay="200">
         <img src="<?php echo get_url('assets/images/cameraman/Professional camera equipment.jpg'); ?>" alt="Professional camera equipment" class="img-fluid rounded-4 shadow-lg" />
@@ -50,7 +65,7 @@ include '../includes/header.php';
       <div class="col-md-6" data-aos="fade-up">
         <div class="service-card h-100">
           <div class="service-icon mb-4">
-            <i class="fas fa-camera"></i>
+            <i class="fas fa-camera-retro text-primary" style="font-size: 3rem;"></i>
           </div>
           <h3 class="service-title">Photography</h3>
           <ul class="service-features">
@@ -63,9 +78,10 @@ include '../includes/header.php';
           <p class="service-description">
             Our expert photographers capture your special moments with attention to detail, creative composition, and professional editing.
           </p>
-          <button class="btn btn-primary book-btn" data-service="photography">
-            Book Photography
-          </button>
+          <a href="#booking" class="btn btn-outline-primary btn-lg px-2 me-md-1" data-service="photography">
+  Book Photography
+</a>
+
         </div>
       </div>
 
@@ -73,7 +89,7 @@ include '../includes/header.php';
       <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
         <div class="service-card h-100">
           <div class="service-icon mb-4">
-            <i class="fas fa-video"></i>
+            <i class="fas fa-film text-warning" style="font-size: 3rem;"></i>
           </div>
           <h3 class="service-title">Videography</h3>
           <ul class="service-features">
@@ -86,7 +102,7 @@ include '../includes/header.php';
           <p class="service-description">
             Our videography team creates cinematic experiences with professional equipment, creative direction, and polished editing.
           </p>
-          <button class="btn btn-primary book-btn" data-service="videography">
+          <button class="btn btn-outline-primary btn-lg px-2 me-md-1" data-service="videography">
             Book Videography
           </button>
         </div>
@@ -106,107 +122,72 @@ include '../includes/header.php';
     </div>
 
     <div class="row g-4">
-      <!-- Professional 1 -->
-      <div class="col-lg-4 col-md-6" data-aos="fade-up">
-        <div class="professional-card">
-          <div class="professional-img-wrapper">
-            <img src="<?php echo get_url('assets/images/team/ahmed2.jpg'); ?>" alt="Ahmed Hassan" class="img-fluid" />
-          </div>
-          <div class="professional-info">
-            <h4 class="professional-name">Ahmed Hassan</h4>
-            <p class="professional-specialty">Wedding Photography Specialist</p>
-            <div class="professional-meta">
-              <div class="professional-location">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Mogadishu</span>
+      <?php if (empty($photographers)): ?>
+        <p class="text-center">No professionals available at the moment.</p>
+      <?php else: ?>
+        <?php foreach ($photographers as $photographer): ?>
+          <!-- Professional Card -->
+          <div class="col-lg-4 col-md-6" data-aos="fade-up">
+            <div class="professional-card">
+              <div class="professional-img-wrapper text-center" style="height: 260px; overflow: hidden;">
+                <?php if (!empty($photographer['image'])): ?>
+                  <img src="<?php echo get_url($photographer['image']); ?>" 
+                       alt="<?php echo htmlspecialchars($photographer['name']); ?>" 
+                       class="img-fluid" 
+                       style="width: 100%; height: 260px; object-fit: cover; object-position: center top; border-radius: 12px;" />
+                <?php else: ?>
+                  <img src="<?php echo get_url('assets/images/placeholder.jpg'); ?>" 
+                       alt="No Image Available" 
+                       class="img-fluid" 
+                       style="width: 100%; height: 260px; object-fit: cover; object-position: center top; border-radius: 12px;" />
+                <?php endif; ?>
               </div>
-              <div class="professional-experience">
-                <i class="fas fa-clock"></i>
-                <span>8 years experience</span>
-              </div>
-            </div>
-            <div class="professional-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star-half-alt"></i>
-              <span>(4.5/5)</span>
-            </div>
-            <a href="#booking" class="btn btn-outline-primary w-100 mt-3 book-professional-btn" data-professional="ahmed" data-service="photography">
-              Book Ahmed
-            </a>
-          </div>
-        </div>
-      </div>
+              <div class="professional-info">
+                <h4 class="professional-name"><?php echo htmlspecialchars($photographer['name']); ?></h4>
+                <p class="professional-specialty"><?php echo htmlspecialchars($photographer['specialty']); ?></p>
+                <div class="professional-meta">
+                  <?php if (!empty($photographer['location'])): ?>
+                    <div class="professional-location">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <span><?php echo htmlspecialchars($photographer['location']); ?></span>
+                    </div>
+                  <?php endif; ?>
+                  <?php if (!empty($photographer['years_experience']) && $photographer['years_experience'] > 0): ?>
+                    <div class="professional-experience">
+                      <i class="fas fa-clock"></i>
+                      <span><?php echo htmlspecialchars($photographer['years_experience']); ?> years experience</span>
+                    </div>
+                  <?php endif; ?>
+                </div>
+                <?php if (!empty($photographer['rating'])): ?>
+                  <div class="professional-rating">
+                      <?php
+                      $rating = $photographer['rating'];
+                      $full_stars = floor($rating);
+                      $half_star = ceil($rating - $full_stars);
+                      $empty_stars = 5 - $full_stars - $half_star;
 
-      <!-- Professional 2 -->
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="professional-card">
-          <div class="professional-img-wrapper">
-            <img src="<?php echo get_url('assets/images/team/hawa.jpg'); ?>" alt="Hawa Abdi" class="img-fluid" />
-          </div>
-          <div class="professional-info">
-            <h4 class="professional-name">Hawa Abdi</h4>
-            <p class="professional-specialty">Portrait & Fashion Photography</p>
-            <div class="professional-meta">
-              <div class="professional-location">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Mogadishu</span>
-              </div>
-              <div class="professional-experience">
-                <i class="fas fa-clock"></i>
-                <span>7 years experience</span>
-              </div>
-            </div>
-            <div class="professional-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star-half-alt"></i>
-              <span>(4.7/5)</span>
-            </div>
-            <a href="#booking" class="btn btn-outline-primary w-100 mt-3 book-professional-btn" data-professional="hawa" data-service="photography">
-              Book Hawa
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Professional 3 -->
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-        <div class="professional-card">
-          <div class="professional-img-wrapper">
-            <img src="<?php echo get_url('assets/images/team/mohamed.jpg'); ?>" alt="Mohamed Omar" class="img-fluid" />
-          </div>
-          <div class="professional-info">
-            <h4 class="professional-name">Mohamed Omar</h4>
-            <p class="professional-specialty">Videography & Film Production</p>
-            <div class="professional-meta">
-              <div class="professional-location">
-                <i class="fas fa-map-marker-alt"></i>
-                <span>Garowe</span>
-              </div>
-              <div class="professional-experience">
-                <i class="fas fa-clock"></i>
-                <span>10 years experience</span>
+                      for ($i = 0; $i < $full_stars; $i++) {
+                          echo '<i class="fas fa-star text-warning"></i>';
+                      }
+                      for ($i = 0; $i < $half_star; $i++) {
+                          echo '<i class="fas fa-star-half-alt text-warning"></i>';
+                      }
+                      for ($i = 0; $i < $empty_stars; $i++) {
+                          echo '<i class="far fa-star text-warning"></i>';
+                      }
+                      ?>
+                      <span>(<?php echo htmlspecialchars(number_format($rating, 1)); ?>/5)</span>
+                  </div>
+                <?php endif; ?>
+                <a href="#booking" class="btn btn-outline-primary w-100 mt-3 book-professional-btn" data-professional="<?php echo htmlspecialchars($photographer['name']); ?>">
+                  Book <?php echo htmlspecialchars($photographer['name']); ?>
+                </a>
               </div>
             </div>
-            <div class="professional-rating">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <span>(5.0/5)</span>
-            </div>
-            <a href="#booking" class="btn btn-outline-primary w-100 mt-3 book-professional-btn" data-professional="mohamed" data-service="videography">
-              Book Mohamed
-            </a>
           </div>
-        </div>
-      </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
     </div>
   </div>
 </section>
@@ -258,9 +239,9 @@ include '../includes/header.php';
                     <label for="professional" class="form-label">Preferred Professional</label>
                     <select class="form-select" id="professional" name="professional">
                       <option value="">Select a professional</option>
-                      <option value="ahmed">Ahmed Hassan</option>
-                      <option value="hawa">Hawa Abdi</option>
-                      <option value="mohamed">Mohamed Omar</option>
+                      <?php foreach ($photographers as $photographer): ?>
+                          <option value="<?php echo htmlspecialchars($photographer['name']); ?>"><?php echo htmlspecialchars($photographer['name']); ?></option>
+                      <?php endforeach; ?>
                     </select>
                   </div>
                 </div>
@@ -278,7 +259,7 @@ include '../includes/header.php';
                 </div>
               </div>
               <div class="mt-4">
-                <button type="submit" class="btn btn-primary px-4 py-2">Submit Booking</button>
+                <button type="submit" class="btn btn-outline-primary btn-lg px-4 py-2">Submit Booking</button>
               </div>
             </form>
           </div>

@@ -52,5 +52,15 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
         </div>
       </div>
     </div>
+    <div class="text-center mb-5" style="color: #000; position: relative; z-index: 10;">
+  <h2 class="fw-bold" style="color: #000;">Find Us</h2>
+  <p class="lead" style="color: #000;">Visit our office in Garowe, Somalia</p>
+</div>
+
+<button style="background: #e2b53e; color: #000; padding: 10px 20px; border: none; z-index: 10; position: relative;">
+  Contact Us
+</button>
+
+
   </div>
 </section> 

@@ -12,7 +12,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <div class="container">
             <a class="navbar-brand" href="<?php echo $base_path; ?>index.php">
-                <img src="<?php echo $base_path; ?>assets/images/logo-color.png" alt="Xafladia Logo" height="40">
+                <img src="<?php echo $base_path; ?>assets/images/logo/Xafladiya Logo_1.png" alt="Xafladia Logo" height="40">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

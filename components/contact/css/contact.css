@@ -124,12 +124,22 @@
 .contact-address-black {
     color: #000 !important;
     font-weight: 600;
+    position: relative;
+    z-index: 1;
+    display: block;
+    visibility: visible;
 }
+
 
 .text-black-all,
 .text-black-all * {
     color: #000 !important;
+    position: relative;
+    z-index: 2;
+    display: block;
+    visibility: visible;
 }
+
 
 /* Responsive styles */
 @media (max-width: 991.98px) {

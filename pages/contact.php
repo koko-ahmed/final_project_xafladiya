@@ -78,7 +78,7 @@ include '../includes/header.php';
         <div class="card border-0 shadow">
           <div class="card-body p-4">
             <h3 class="card-title mb-4">Send Us a Message</h3>
-            <form id="contactForm" action="process_contact.php" method="POST">
+            <form id="contactForm" action="../includes/db.php" method="POST">
               <div class="row g-3">
                 <div class="col-md-6">
                   <div class="form-group">
@@ -191,8 +191,8 @@ include '../includes/header.php';
 <section class="map-section py-5">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="fw-bold">Find Us</h2>
-      <p class="lead">Visit our office in Garowe, Somalia</p>
+      <h2 class="fw-bold" style="color: #000000;">Find Us</h2>
+      <p class="lead" style="color: #000000;">Visit our office in Garowe, Somalia</p>
     </div>
     <div class="map-container shadow rounded">
       <iframe
@@ -218,6 +218,56 @@ include '../includes/header.php';
 </section>
 
 <?php include '../includes/footer.php'; ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS Animation Library -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<!-- Custom JS -->
+<script src="<?php echo get_url('assets/js/main.js'); ?>"></script>
+
+<script>
+    // Initialize AOS animation library
+    AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true
+    });
+
+    // Handle contact form submission
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Add your form submission logic here
+        alert('Thank you for your message! We will get back to you soon.');
+        this.reset();
+    });
+
+    // Handle newsletter form submission
+    document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Add your newsletter subscription logic here
+        alert('Thank you for subscribing to our newsletter!');
+        this.reset();
+    });
+
+    const videos = document.querySelectorAll('.hero-bg-video');
+    let current = 0;
+    function showVideo(index) {
+        videos.forEach((vid, i) => {
+            vid.classList.toggle('active', i === index);
+            if (i === index) {
+                vid.currentTime = 0;
+                vid.play();
+            } else {
+                vid.pause();
+            }
+        });
+    }
+    showVideo(0); // Should show the first video only
+
+    videoInterval = setInterval(nextVideo, 8000); // 8 seconds
+</script>
+
+<!-- Add hero.js before closing body tag -->
+<script src="assets/js/hero.js"></script>
 
 <!-- Custom JS -->
 <script>
@@ -238,14 +288,22 @@ $(document).ready(function() {
     });
     
     if (isValid) {
+      // Show loading state
+      $('#submitContactForm').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...');
+      
       // Submit form via AJAX
       $.ajax({
-        url: $(this).attr('action'),
+        url: '../includes/db.php',
         type: 'POST',
         data: $(this).serialize(),
+        dataType: 'json',
         success: function(response) {
-          $('#contactSuccess').show();
-          $('#contactForm')[0].reset();
+          if (response.status === 'success') {
+            $('#contactSuccess').show();
+            $('#contactForm')[0].reset();
+          } else {
+            alert('Error: ' + (response.message || 'An error occurred. Please try again later.'));
+          }
         },
         error: function() {
           alert('An error occurred. Please try again later.');
@@ -254,4 +312,14 @@ $(document).ready(function() {
     }
   });
 });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fix for dropdown menus
+        var dropdownTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="dropdown"]'));
+        dropdownTriggerList.forEach(function(element) {
+            new bootstrap.Dropdown(element);
+        });
+    });
 </script> 

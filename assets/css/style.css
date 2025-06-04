@@ -297,6 +297,11 @@ body.dark-mode .modern-hero {
 
 .navbar-brand img {
     max-height: 45px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img {
+    transform: scale(1.1);
 }
 
 .navbar-nav .nav-link {
@@ -536,31 +541,46 @@ body.dark-mode .modern-hero {
 }
 
 .btn-primary {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
-    color: var(--text-light);
+    background: linear-gradient(90deg, #684596 0%, #f58f1f 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(104, 69, 150, 0.10);
 }
 
 .btn-primary:hover,
 .btn-primary:focus,
 .btn-primary:active {
-    background: var(--accent-color) !important;
-    border-color: var(--accent-color) !important;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(90deg, #f58f1f 0%, #684596 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 24px rgba(245, 143, 31, 0.15);
+    border: none !important;
+    transform: translateY(-2px);
 }
 
 .btn-outline-primary {
-    color: var(--primary-color);
-    border-color: var(--primary-color);
-    background: transparent;
+    color: #684596 !important;
+    border: 2px solid #684596 !important;
+    background: #fff !important;
+    font-weight: 700;
 }
 
-.btn-outline-primary:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+    background: #684596 !important;
+    color: #fff !important;
+    border: 2px solid #684596 !important;
+    box-shadow: 0 6px 24px rgba(104, 69, 150, 0.10);
+    transform: translateY(-2px);
+}
+
+.btn:disabled,
+.btn[disabled],
+.btn.disabled {
+    opacity: 0.6 !important;
+    pointer-events: none !important;
+    filter: grayscale(0.3);
 }
 
 /* Ensure CTA buttons have consistent colors */
@@ -1471,4 +1491,38 @@ section {
 
 .custom-navbar-link::after {
     display: none !important;
+}
+
+.subscribe-btn:hover {
+    background: linear-gradient(90deg, #6a11cb, #2575fc) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(101, 83, 255, 0.3);
+}
+
+/* Add custom styles for the services dropdown */
+.navbar .dropdown-menu {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    border-radius: 0.5rem;
+}
+
+.navbar .dropdown-item {
+    padding: 0.75rem 1.5rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.navbar .dropdown-item:hover {
+    background-color: var(--primary-color); /* Use primary color for hover */
+    color: #fff; /* Text color for primary background */
+}
+
+.navbar .dropdown-item.active {
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: #fff;
+}
+
+/* Optional: Add a separator style if you use dividers */
+.navbar .dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #dee2e6;
 }

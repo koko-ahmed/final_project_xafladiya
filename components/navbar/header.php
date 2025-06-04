@@ -25,7 +25,7 @@ if (!isset($page_title)) {
     <!-- Favicon -->
     <link
       rel="icon"
-      href="<?php echo $base_path; ?>assets/images/logo/logo-icon.png"
+      href="<?php echo $base_path; ?>assets/images/logo/Xafladiya Logo_10.png"
       type="image/png"
     />
     <!-- Bootstrap 5 CSS -->

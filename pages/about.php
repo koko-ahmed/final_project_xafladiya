@@ -67,8 +67,8 @@ include '../includes/header.php';
     <div class="row g-4">
       <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
         <div class="card team-card h-100">
-          <div class="team-image overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="CEO" class="card-img-top" />
+          <div class="team-image overflow-hidden text-center">
+            <img src="<?php echo get_url('assets/images/Mohamed Hassan-CEO.jpg'); ?>" alt="Mohamed Hassan - CEO" style="width: 260px; height: 260px; object-fit: cover; border-radius: 12px; margin: 0 auto;" />
             <div class="team-overlay">
               <div class="social-links">
                 <a href="#" class="text-white me-2"><i class="fab fa-linkedin fa-lg"></i></a>
@@ -85,8 +85,8 @@ include '../includes/header.php';
       </div>
       <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
         <div class="card team-card h-100">
-          <div class="team-image overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="CTO" class="card-img-top" />
+          <div class="team-image overflow-hidden text-center">
+            <img src="<?php echo get_url('assets/images/Amina Ali-CTO.jpg'); ?>" alt="Amina Ali - CTO" style="width: 260px; height: 260px; object-fit: cover; border-radius: 12px; margin: 0 auto;" />
             <div class="team-overlay">
               <div class="social-links">
                 <a href="#" class="text-white me-2"><i class="fab fa-linkedin fa-lg"></i></a>
@@ -103,8 +103,8 @@ include '../includes/header.php';
       </div>
       <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
         <div class="card team-card h-100">
-          <div class="team-image overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Marketing Director" class="card-img-top" />
+          <div class="team-image overflow-hidden text-center">
+            <img src="<?php echo get_url('assets/images/Ahmed-Omar-Marketing-Director.jpg'); ?>" alt="Ahmed Omar - Marketing Director" style="width: 260px; height: 260px; object-fit: cover; border-radius: 12px; margin: 0 auto;" />
             <div class="team-overlay">
               <div class="social-links">
                 <a href="#" class="text-white me-2"><i class="fab fa-linkedin fa-lg"></i></a>
@@ -121,8 +121,8 @@ include '../includes/header.php';
       </div>
       <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
         <div class="card team-card h-100">
-          <div class="team-image overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" alt="Customer Support Manager" class="card-img-top" />
+          <div class="team-image overflow-hidden text-center">
+            <img src="<?php echo get_url('assets/images/Fatima-Mohamed-Customer-Support Manager.jpg'); ?>" alt="Fatima Mohamed - Customer Support Manager" style="width: 260px; height: 260px; object-fit: cover; border-radius: 12px; margin: 0 auto;" />
             <div class="team-overlay">
               <div class="social-links">
                 <a href="#" class="text-white me-2"><i class="fab fa-linkedin fa-lg"></i></a>

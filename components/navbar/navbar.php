@@ -5,7 +5,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
   <div class="container">
     <a class="navbar-brand" href="<?php echo $is_home ? 'index.php' : '../../index.php'; ?>">
-      <img src="<?php echo $is_home ? 'assets/images/logo/logo.png' : '../../assets/images/logo/logo.png'; ?>" alt="Xafladiya Logo" height="40" id="navbar-logo" />
+      <img src="<?php echo $is_home ? 'assets/images/logo/Xafladiya Logo_1.png' : '../../assets/images/logo/Xafladiya Logo_1.png'; ?>" alt="Xafladiya Logo" height="40" id="navbar-logo" />
     </a>
     <button
       class="navbar-toggler"

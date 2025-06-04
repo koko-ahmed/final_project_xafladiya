@@ -4,7 +4,7 @@ include '../includes/header.php';
 ?>
 
 <!-- Events Hero Section -->
-<section class="events-hero-section py-5">
+<section class="events-hero-section py-5" style="padding-top: 120px;">
   <div class="container">
     <div class="text-center mb-5">
       <h1 class="display-4 fw-bold mb-3">Our Events</h1>
@@ -55,10 +55,10 @@ include '../includes/header.php';
     </div>
     <div class="row g-4">
       <!-- Event 1 -->
-      <div class="col-lg-4 col-md-6" data-event="wedding" data-city="garowe">
+      <div class="col-lg-4 col-md-6" data-event="corporate" data-city="garowe">
         <div class="card event-card h-100">
           <div class="event-image">
-            <img src="https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Annual Business Conference" loading="lazy" width="400" height="250" />
+            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Annual Business Conference" loading="lazy" width="400" height="250" />
             <div class="event-overlay"></div>
             <div class="event-date">Aug 15</div>
           </div>
@@ -119,6 +119,72 @@ include '../includes/header.php';
           </div>
         </div>
       </div>
+
+      <!-- Event 4 -->
+      <div class="col-lg-4 col-md-6" data-event="birthday" data-city="mogadishu">
+        <div class="card event-card h-100">
+          <div class="event-image">
+            <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Children's Birthday Party" loading="lazy" width="400" height="250" />
+            <div class="event-overlay"></div>
+            <div class="event-date">Sep 10</div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Children's Birthday Party</h5>
+            <p class="card-text mb-3">A magical celebration with games, entertainment, and delicious treats for the little ones.</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span><i class="fas fa-map-marker-alt text-primary me-2"></i>Mogadishu Fun Center</span>
+              <span><i class="far fa-clock text-primary me-2"></i>2:00 PM</span>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent border-top-0">
+            <button class="btn btn-outline-primary w-100 event-details-btn">More Info</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event 5 -->
+      <div class="col-lg-4 col-md-6" data-event="corporate" data-city="galkacyo">
+        <div class="card event-card h-100">
+          <div class="event-image">
+            <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Tech Startup Meetup" loading="lazy" width="400" height="250" />
+            <div class="event-overlay"></div>
+            <div class="event-date">Sep 15</div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Tech Startup Meetup</h5>
+            <p class="card-text mb-3">Connect with fellow entrepreneurs, investors, and tech enthusiasts in this networking event.</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span><i class="fas fa-map-marker-alt text-primary me-2"></i>Galkacyo Innovation Hub</span>
+              <span><i class="far fa-clock text-primary me-2"></i>6:00 PM</span>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent border-top-0">
+            <button class="btn btn-outline-primary w-100 event-details-btn">More Info</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event 6 -->
+      <div class="col-lg-4 col-md-6" data-event="wedding" data-city="bosaso">
+        <div class="card event-card h-100">
+          <div class="event-image">
+            <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Traditional Wedding Ceremony" loading="lazy" width="400" height="250" />
+            <div class="event-overlay"></div>
+            <div class="event-date">Sep 20</div>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Traditional Wedding Ceremony</h5>
+            <p class="card-text mb-3">Experience the rich cultural traditions of Somali wedding celebrations.</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span><i class="fas fa-map-marker-alt text-primary me-2"></i>Bosaso Cultural Center</span>
+              <span><i class="far fa-clock text-primary me-2"></i>7:00 PM</span>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent border-top-0">
+            <button class="btn btn-outline-primary w-100 event-details-btn">More Info</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -127,9 +193,9 @@ include '../includes/header.php';
 <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="background: linear-gradient(90deg, #684596 0%, #f58f1f 100%); color: #fff;">
         <h5 class="modal-title" id="eventDetailsModalLabel">Event Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="row">
@@ -148,8 +214,8 @@ include '../includes/header.php';
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <a href="contact.php" class="btn btn-primary">Book Now</a>
+        <button type="button" class="btn" style="background-color: black; color: white;" data-bs-dismiss="modal">Close</button>
+        <a href="contact.php" class="btn" style="background-color: #ff6600; color: white;">Book Now</a>
       </div>
     </div>
   </div>
