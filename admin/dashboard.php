@@ -5,6 +5,8 @@ require_once __DIR__ . '/../includes/admin_auth.php';
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
+<link rel="icon" type="image/png" href="../assets/images/logo/Xafladiya Logo_10.png">
+
 <style>
 .btn-primary {
     background-color: #28a745; /* Green color */

@@ -143,23 +143,106 @@
     color: var(--text-light);
 }
 
+/* Navbar buttons */
+.navbar .btn-outline-primary,
+.navbar .btn-primary {
+    min-width: 100px; /* Set minimum width for both buttons */
+    text-align: center;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.navbar .btn-outline-primary:hover,
+.navbar .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
 /* Responsive adjustments */
 @media (max-width: 991px) {
     .navbar-collapse {
-        background-color: rgba(15, 15, 20, 0.97);
-        margin-top: var(--spacing-sm);
+        position: fixed;
+        top: 0;
+        right: -100%; /* Menu slides from the right */
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background-color: #ffffff; /* White background for the menu */
+        margin-top: 0;
         padding: var(--spacing-md);
-        border-radius: var(--border-radius-md);
+        border-radius: 0;
         box-shadow: var(--shadow-md);
+        transition: right 0.3s ease-in-out; /* Smooth transition for sliding */
+        z-index: 9999; /* Increased z-index to ensure it's on top */
+        isolation: isolate; /* Create a new stacking context */
+        will-change: transform; /* Hint for performance and stacking context */
+    }
+
+    .navbar-collapse.show {
+        right: 0; /* Menu is visible */
     }
 
     .navbar-nav .nav-link {
         padding: 0.75rem 1rem;
+        color: #333 !important; /* Dark text for better contrast on white background */
+    }
+
+    /* Make buttons full width in mobile menu */
+    .navbar-nav .btn-outline-primary,
+    .navbar-nav .btn-primary {
+        width: 100%;
+        margin: 0.5rem 0;
     }
 
     .header-actions {
         margin-top: var(--spacing-md);
         justify-content: center;
+    }
+
+    /* Add overlay when menu is open */
+    .navbar-collapse::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+        pointer-events: none;
+    }
+
+    .navbar-collapse.show::before {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Adjust dropdown menu for white background */
+    .dropdown-menu {
+        background-color: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .dropdown-item {
+        color: #333;
+    }
+
+    .dropdown-item:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Style the hamburger icon transformation */
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        transition: background-image 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#333'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e");
+        transform: rotate(90deg); /* Rotate for a smoother cross effect */
     }
 }
 

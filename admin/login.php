@@ -7,6 +7,7 @@ require_once __DIR__ . '/../config/session_config.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo/Xafladiya logo_10.png">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background-color: #f8f9fa; }

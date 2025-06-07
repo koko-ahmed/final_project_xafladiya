@@ -195,24 +195,14 @@ include '../includes/header.php';
       <p class="lead" style="color: #000000;">Visit our office in Garowe, Somalia</p>
     </div>
     <div class="map-container shadow rounded">
-      <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62876.90913944297!2d48.45054864357782!3d8.404498747978196!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3d87302a8bee7379%3A0x66a2d9c6f41eb4b9!2sGarowe%2C%20Somalia!5e0!3m2!1sen!2sus!4v1654321098765!5m2!1sen!2sus"
-        width="100%"
-        height="450"
-        style="border: 0; border-radius: 8px"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-      ></iframe>
+      <img
+        src="<?php echo get_url('assets/images/somalia_map.png'); ?>"
+        alt="Map of Somalia"
+        class="img-fluid rounded"
+        style="width: 100%; height: auto;"
+      />
     </div>
     <div class="text-center mt-4">
-      <a
-        href="https://goo.gl/maps/YourActualGoogleMapsLink"
-        target="_blank"
-        rel="noopener"
-        class="btn btn-primary"
-        >Get Directions</a
-      >
     </div>
   </div>
 </section>
