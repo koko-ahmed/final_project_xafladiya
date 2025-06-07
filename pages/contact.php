@@ -78,7 +78,7 @@ include '../includes/header.php';
         <div class="card border-0 shadow">
           <div class="card-body p-4">
             <h3 class="card-title mb-4">Send Us a Message</h3>
-            <form id="contactForm" action="../includes/db.php" method="POST">
+            <form id="contactForm" method="POST">
               <div class="row g-3">
                 <div class="col-md-6">
                   <div class="form-group">
@@ -211,6 +211,7 @@ include '../includes/header.php';
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <!-- AOS Animation Library -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script type="text/javascript" src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
 <!-- Custom JS -->
 <script src="<?php echo get_url('assets/js/main.js'); ?>"></script>
 
@@ -222,15 +223,53 @@ include '../includes/header.php';
         once: true
     });
 
+    // Initialize EmailJS with your user ID
+    (function() {
+        emailjs.init("vi1AaqblfdWuL5bMF"); // Replace with your actual User ID
+    })();
+
     // Handle contact form submission
     document.getElementById('contactForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Add your form submission logic here
-        alert('Thank you for your message! We will get back to you soon.');
-        this.reset();
+        e.preventDefault(); // Prevent default form submission
+
+        // Basic form validation (simplified for EmailJS)
+        var isValid = true;
+        var form = this;
+        form.querySelectorAll('[required]').forEach(function(input) {
+            if (!input.value) {
+                isValid = false;
+                input.classList.add('is-invalid');
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        if (isValid) {
+            // Show loading state
+            document.getElementById('submitContactForm').disabled = true;
+            document.getElementById('submitContactForm').innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+
+            emailjs.sendForm('koko ahmed', 'template_mbduk48', this) // Replace with your Service ID and Template ID
+                .then(function() {
+                    console.log('SUCCESS!');
+                    document.getElementById('contactSuccess').style.display = 'block';
+                    form.reset(); // Reset form fields
+                    document.getElementById('submitContactForm').disabled = false;
+                    document.getElementById('submitContactForm').innerHTML = 'Send Message';
+                    // Hide success message after a few seconds
+                    setTimeout(function() {
+                        document.getElementById('contactSuccess').style.display = 'none';
+                    }, 5000); // 5 seconds
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    alert('Failed to send message. Please try again later.'); // Show error alert
+                    document.getElementById('submitContactForm').disabled = false;
+                    document.getElementById('submitContactForm').innerHTML = 'Send Message';
+                });
+        }
     });
 
-    // Handle newsletter form submission
+    // Handle newsletter form submission (keeping existing if it's still needed, otherwise remove)
     document.getElementById('newsletterForm').addEventListener('submit', function(e) {
         e.preventDefault();
         // Add your newsletter subscription logic here
@@ -261,47 +300,50 @@ include '../includes/header.php';
 
 <!-- Custom JS -->
 <script>
-$(document).ready(function() {
-  // Form validation
-  $('#contactForm').on('submit', function(e) {
-    e.preventDefault();
-    
-    // Basic form validation
-    var isValid = true;
-    $(this).find('[required]').each(function() {
-      if (!$(this).val()) {
-        isValid = false;
-        $(this).addClass('is-invalid');
-      } else {
-        $(this).removeClass('is-invalid');
-      }
-    });
-    
-    if (isValid) {
-      // Show loading state
-      $('#submitContactForm').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...');
-      
-      // Submit form via AJAX
-      $.ajax({
-        url: '../includes/db.php',
-        type: 'POST',
-        data: $(this).serialize(),
-        dataType: 'json',
-        success: function(response) {
-          if (response.status === 'success') {
-            $('#contactSuccess').show();
-            $('#contactForm')[0].reset();
-          } else {
-            alert('Error: ' + (response.message || 'An error occurred. Please try again later.'));
-          }
-        },
-        error: function() {
-          alert('An error occurred. Please try again later.');
-        }
-      });
-    }
-  });
-});
+// The jQuery block for contact form submission is removed as it's replaced by EmailJS logic above.
+// The newsletter form submission (if it exists) should be handled separately if it's not part of EmailJS.
+// For now, removing the entire jQuery document.ready block related to contactForm submission.
+// $(document).ready(function() {
+//   // Form validation
+//   $('#contactForm').on('submit', function(e) {
+//     e.preventDefault();
+
+//     // Basic form validation
+//     var isValid = true;
+//     $(this).find('[required]').each(function() {
+//       if (!$(this).val()) {
+//         isValid = false;
+//         $(this).addClass('is-invalid');
+//       } else {
+//         $(this).removeClass('is-invalid');
+//       }
+//     });
+
+//     if (isValid) {
+//       // Show loading state
+//       $('#submitContactForm').prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...');
+
+//       // Submit form via AJAX
+//       $.ajax({
+//         url: '../includes/db.php',
+//         type: 'POST',
+//         data: $(this).serialize(),
+//         dataType: 'json',
+//         success: function(response) {
+//           if (response.status === 'success') {
+//             $('#contactSuccess').show();
+//             $('#contactForm')[0].reset();
+//           } else {
+//             alert('Error: ' + (response.message || 'An error occurred. Please try again later.'));
+//           }
+//         },
+//         error: function() {
+//           alert('An error occurred. Please try again later.');
+//         }
+//       });
+//     }
+//   });
+// });
 </script>
 
 <script>
