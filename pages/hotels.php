@@ -1,6 +1,7 @@
 <?php
 require_once '../config/config.php';
 $page_title = $site_name . ' - Event Venues & Halls';
+$current_page = 'hotels';
 include '../includes/header.php';
 ?>
 
@@ -289,7 +290,7 @@ include '../includes/header.php';
 
 <!-- Booking Modal -->
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered"> 
         <div class="modal-content">
             <div class="modal-header border-0 bg-gradient">
                 <h5 class="modal-title fw-bold" id="bookingModalLabel">Complete Your Booking</h5>

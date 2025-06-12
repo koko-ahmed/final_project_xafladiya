@@ -14,7 +14,7 @@
 /* Add any legacy or page-specific styles below. All CSS variables are now in base.css! */
 
 /* Example: */
-/* .custom-section {
+/* .custom-section { */
 body {
     font-family: 'Inter', 'Lato', 'Poppins', sans-serif;
     color: var(--primary-text);
@@ -22,6 +22,7 @@ body {
     overflow-x: hidden;
     background-color: var(--bg-light);
     transition: all 0.3s ease;
+    padding-top: 80px; /* Added for fixed navbar */
 }
 
 /* Modern UI Elements */
@@ -1277,10 +1278,13 @@ body.dark-mode .testimonial-text {
 
 /* Global styles */
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--bg-light);
+    font-family: 'Inter', 'Lato', 'Poppins', sans-serif;
     color: var(--primary-text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    background-color: var(--bg-light);
     transition: all 0.3s ease;
+    padding-top: 80px; /* Added for fixed navbar */
 }
 
 /* Smooth scrolling */
@@ -1525,4 +1529,49 @@ section {
 .navbar .dropdown-divider {
     margin: 0.5rem 0;
     border-color: #dee2e6;
+}
+
+/* Sidebar styles */
+#sidebarMenu {
+    background-color: #f8f9fa; /* Light background for sidebar */
+    padding-top: 20px;
+    border-right: 1px solid #e0e0e0;
+}
+
+#sidebarMenu .nav-link {
+    font-weight: 500;
+    color: var(--primary-text) !important; /* Use CSS variable for consistency, with !important */
+    padding: 10px 15px;
+    margin-bottom: 5px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: transparent !important; /* Ensure no default background interferes, use !important */
+}
+
+#sidebarMenu .nav-link .fas {
+    margin-right: 10px;
+    color: var(--accent) !important; /* Use CSS variable for consistency, with !important */
+}
+
+#sidebarMenu .nav-link:hover {
+    color: var(--accent) !important; /* Accent color on hover */
+    background-color: #e9ecef !important; /* Light background on hover, use !important */
+}
+
+#sidebarMenu .nav-link.active {
+    color: #ffffff !important; /* White text for active link */
+    background: linear-gradient(to right, #6f42c1, #fd7e14) !important; /* Gradient background for active, use !important */
+    box-shadow: 0 4px 10px rgba(111, 66, 193, 0.3);
+}
+
+#sidebarMenu .nav-link.active .fas {
+    color: #ffffff !important; /* White icon for active link */
+}
+
+.sidebar-heading {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 1.5rem;
+    color: var(--secondary-text) !important; /* Ensure heading color is consistent */
 }

@@ -214,6 +214,7 @@ include '../includes/header.php';
 <script type="text/javascript" src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
 <!-- Custom JS -->
 <script src="<?php echo get_url('assets/js/main.js'); ?>"></script>
+<link rel="stylesheet" href="<?php echo get_url('assets/css/contact-page.css'); ?>">
 
 <script>
     // Initialize AOS animation library

@@ -7,5 +7,4 @@ if(!isset($_SESSION["logged_in"]) || $_SESSION["logged_in"] !== true){
 
 $password = 'Mama.123';
 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-echo $hashed_password;
 ?> 

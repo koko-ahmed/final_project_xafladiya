@@ -2,15 +2,11 @@
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/session_config.php';
 require_once __DIR__ . '/../../includes/admin_auth.php';
-require_once __DIR__ . '/../../includes/header.php';
 require_once __DIR__ . '/../../includes/db.php';
-
-$message = '';
-$message_type = '';
 
 // Fetch photographers from the database
 $photographers = [];
-$query = "SELECT id, name, specialty, contact_email, contact_phone, bio, image FROM photographers ORDER BY name";
+$query = "SELECT * FROM photographers ORDER BY name ASC";
 $result = mysqli_query($db, $query);
 
 if ($result) {
@@ -19,64 +15,129 @@ if ($result) {
     }
     mysqli_free_result($result);
 } else {
-    $message = 'Error fetching photographers: ' . mysqli_error($db);
-    $message_type = 'danger';
+    $_SESSION['message'] = 'Error fetching photographers: ' . mysqli_error($db);
+    $_SESSION['message_type'] = 'danger';
 }
 ?>
 
-<div class="container mt-5">
-    <h1>Photographer Management</h1>
+<?php include __DIR__ . '/../../includes/header.php'; ?>
 
-    <h2>Existing Photographers</h2>
+<div class="container-fluid">
+    <div class="row">
+        <?php include __DIR__ . '/../../includes/sidebar.php'; ?>
+        
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-5">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                <h1 class="h2">Manage Photographers</h1>
+                <a href="add_photographer.php" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Photographer
+                </a>
+            </div>
 
-    <a href="<?php echo get_url('admin/photographers/add_photographer.php'); ?>" class="btn btn-primary mb-3">
-        <i class="fas fa-plus-circle me-2"></i> Add New Photographer
-    </a>
-
-    <?php if ($message): ?>
-        <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
-            <?php echo $message; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
-
-    <?php if (empty($photographers)): ?>
-        <p>No photographers found.</p>
-    <?php else: ?>
-        <div class="row g-4">
-            <?php foreach ($photographers as $photographer): ?>
-                <div class="col-lg-4 col-md-6">
-                    <div class="card h-100">
-                        <?php if (!empty($photographer['image'])): ?>
-                            <img src="<?php echo get_url($photographer['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($photographer['name']); ?>" style="height: 200px; object-fit: cover;">
-                        <?php else: ?>
-                            <img src="<?php echo get_url('assets/images/placeholder.jpg'); ?>" class="card-img-top" alt="No Image Available" style="height: 200px; object-fit: cover;">
-                        <?php endif; ?>
-                        <div class="card-body">
-                            <h5 class="card-title"><?php echo htmlspecialchars($photographer['name']); ?></h5>
-                            <p class="card-text mb-2"><strong>Specialty:</strong> <?php echo htmlspecialchars($photographer['specialty']); ?></p>
-                            <p class="card-text mb-2"><strong>Email:</strong> <?php echo htmlspecialchars($photographer['contact_email']); ?></p>
-                            <p class="card-text mb-2"><strong>Phone:</strong> <?php echo htmlspecialchars($photographer['contact_phone']); ?></p>
-                            <?php if (!empty($photographer['bio'])): ?>
-                                <p class="card-text"><strong>Bio:</strong> <?php echo nl2br(htmlspecialchars($photographer['bio'])); ?></p>
-                            <?php endif; ?>
-                            <div class="mt-3">
-                                <a href="<?php echo get_url('admin/photographers/edit_photographer.php?id=' . $photographer['id']); ?>" 
-                                   class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <a href="<?php echo get_url('admin/photographers/delete_photographer.php?id=' . $photographer['id']); ?>" 
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Are you sure you want to delete this photographer?');">
-                                    <i class="fas fa-trash"></i> Delete
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+            <?php if(isset($_SESSION['message'])): ?>
+                <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert">
+                    <?php 
+                    echo $_SESSION['message'];
+                    unset($_SESSION['message']);
+                    unset($_SESSION['message_type']);
+                    ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
+            <?php endif; ?>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Specialty</th>
+                            <th>Bio</th>
+                            <th>Location</th>
+                            <th>Years Exp.</th>
+                            <th>Rating</th>
+                            <th>Image</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($photographers)): ?>
+                            <tr>
+                                <td colspan="10" class="text-center">No photographers found</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($photographers as $photographer): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($photographer['name']); ?></td>
+                                    <td><?php echo htmlspecialchars($photographer['contact_email']); ?></td>
+                                    <td><?php echo htmlspecialchars($photographer['contact_phone']); ?></td>
+                                    <td><?php echo htmlspecialchars($photographer['specialty']); ?></td>
+                                    <td><?php echo htmlspecialchars(substr($photographer['bio'], 0, 50)) . (strlen($photographer['bio']) > 50 ? '...' : ''); ?></td>
+                                    <td><?php echo htmlspecialchars($photographer['location']); ?></td>
+                                    <td><?php echo htmlspecialchars($photographer['years_experience']); ?></td>
+                                    <td><?php echo htmlspecialchars($photographer['rating']); ?></td>
+                                    <td>
+                                        <?php if (!empty($photographer['image'])): ?>
+                                            <img src="<?php echo get_url($photographer['image']); ?>" alt="Photographer Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                        <?php else: ?>
+                                            No Image
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <a href="edit_photographer.php?id=<?php echo $photographer['id']; ?>" class="btn btn-sm btn-primary me-2">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger" 
+                                                onclick="confirmDelete(<?php echo $photographer['id']; ?>, '<?php echo htmlspecialchars($photographer['name']); ?>')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
 </div>
 
-<?php require_once __DIR__ . '/../../includes/footer.php'; ?> 
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the photographer "<span id="photographerName"></span>"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" action="delete_photographer.php" method="POST" style="display: inline;">
+                    <input type="hidden" name="photographer_id" id="photographerId">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(photographerId, photographerName) {
+    document.getElementById('photographerId').value = photographerId;
+    document.getElementById('photographerName').textContent = photographerName;
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+}
+
+// Initialize all tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+});
+</script>
+
+<?php include __DIR__ . '/../../includes/footer.php'; ?> 

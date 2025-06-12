@@ -1,293 +1,471 @@
 <?php
-$page_title = 'Xafladiya - Events';
+require_once '../config/config.php';
+require_once '../includes/db.php';
+$page_title = $site_name . ' - Events';
+$current_page = 'events';
+
+// Debug: Print base URL
+echo "<!-- Debug: Base URL = " . $base_url . " -->\n";
+
+// Debug: Check database connection
+if (!$db) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
+
+// Debug: Print events query
+$query = "SELECT * FROM events WHERE status = 'active' ORDER BY event_date ASC";
+$result = mysqli_query($db, $query);
+
+if (!$result) {
+    die("Query failed: " . mysqli_error($db));
+}
+
+// Debug: Print events data
+$events = [];
+while ($event = mysqli_fetch_assoc($result)) {
+    $events[] = $event;
+    echo "<!-- Debug: Event found - ID: " . $event['id'] . ", Title: " . $event['title'] . ", Image path from DB: " . $event['image_path'] . " -->\n";
+}
+
+mysqli_free_result($result);
+
 include '../includes/header.php';
 ?>
 
-<!-- Events Hero Section -->
-<section class="events-hero-section py-5" style="padding-top: 120px;">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h1 class="display-4 fw-bold mb-3">Our Events</h1>
-      <p class="lead mb-4">Discover and attend upcoming events or plan your own with our support</p>
-      <div class="search-filters mb-4">
-        <div class="row justify-content-center">
-          <div class="col-md-3 mb-3 mb-md-0">
-            <label for="eventTypeFilter" class="form-label text-light">Event Type</label>
-            <select class="form-select" id="eventTypeFilter" aria-label="Filter by event type">
-              <option selected value="">All Event Types</option>
-              <option value="wedding">Wedding</option>
-              <option value="graduation">Graduation</option>
-              <option value="corporate">Corporate</option>
-              <option value="birthday">Birthday</option>
-            </select>
-          </div>
-          <div class="col-md-3 mb-3 mb-md-0">
-            <label for="cityFilter" class="form-label text-light">City</label>
-            <select class="form-select" id="cityFilter" aria-label="Filter by city">
-              <option selected value="">All Cities</option>
-              <option value="garowe">Garowe</option>
-              <option value="bosaso">Bosaso</option>
-              <option value="galkacyo">Galkacyo</option>
-              <option value="mogadishu">Mogadishu</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label for="dateFilter" class="form-label text-light">Date</label>
-            <select class="form-select" id="dateFilter" aria-label="Filter by date">
-              <option selected value="">All Dates</option>
-              <option value="today">Today</option>
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-            </select>
-          </div>
+<!-- Custom CSS for events page -->
+<link rel="stylesheet" href="<?php echo get_url('assets/css/venue-styles.css'); ?>">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Hero Section -->
+<section class="venues-hero text-center">
+    <div class="hero-background" style="background-image: url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80')"></div>
+    <div class="container">
+        <h1 class="display-4 animate-on-scroll fade-up">Discover Amazing Events</h1>
+        <p class="lead mx-auto animate-on-scroll fade-up">Find and book tickets for the best events in Somalia</p>
+        <div class="mt-4 animate-on-scroll fade-up d-flex justify-content-center flex-wrap gap-3">
+            <a href="#events" class="btn btn-primary cta-button">Browse Events</a>
         </div>
-      </div>
     </div>
-  </div>
 </section>
 
-<!-- Featured Events Section -->
-<section class="featured-events-section py-5">
-  <div class="container">
-    <div class="section-title text-center mb-5">
-      <h2>Featured Events</h2>
-      <p>Explore the most popular upcoming events in your area</p>
+<!-- Search & Filter Section -->
+<section class="search-section py-4 bg-light">
+    <div class="container">
+        <div class="search-wrapper">
+            <div class="row g-3">
+                <div class="col-lg-3 col-md-6">
+                    <select class="form-select" id="eventCategory">
+                        <option value="">Event Category</option>
+                        <option value="wedding">Wedding</option>
+                        <option value="graduation">Graduation</option>
+                        <option value="corporate">Corporate</option>
+                        <option value="birthday">Birthday</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <select class="form-select" id="location">
+                        <option value="">Location</option>
+                        <option value="mogadishu">Mogadishu</option>
+                        <option value="hargeisa">Hargeisa</option>
+                        <option value="bosaso">Bosaso</option>
+                        <option value="garowe">Garowe</option>
+                        <option value="kismayo">Kismayo</option>
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <input type="date" class="form-control" id="eventDate" placeholder="Event Date">
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <button class="btn btn-primary w-100 search-btn">
+                        <i class="fas fa-search me-2"></i>Search Events
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row g-4">
-      <!-- Event 1 -->
-      <div class="col-lg-4 col-md-6" data-event="corporate" data-city="garowe">
-        <div class="card event-card h-100">
-          <div class="event-image">
-            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Annual Business Conference" loading="lazy" width="400" height="250" />
-            <div class="event-overlay"></div>
-            <div class="event-date">Aug 15</div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Annual Business Conference</h5>
-            <p class="card-text mb-3">The largest business networking event in Garowe, featuring keynote speakers from major companies.</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-map-marker-alt text-primary me-2"></i>Garowe Business Center</span>
-              <span><i class="far fa-clock text-primary me-2"></i>9:00 AM</span>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent border-top-0">
-            <button class="btn btn-outline-primary w-100 event-details-btn">More Info</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Event 2 -->
-      <div class="col-lg-4 col-md-6" data-event="wedding" data-city="bosaso">
-        <div class="card event-card h-100">
-          <div class="event-image">
-            <img src="https://images.unsplash.com/photo-1532712938310-34cb3982ef74?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Wedding Expo" loading="lazy" width="400" height="250" />
-            <div class="event-overlay"></div>
-            <div class="event-date">Sep 5</div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Wedding Expo 2025</h5>
-            <p class="card-text mb-3">Discover the latest wedding trends, meet planners, and find everything you need for your perfect day.</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-map-marker-alt text-primary me-2"></i>Bosaso Grand Hotel</span>
-              <span><i class="far fa-clock text-primary me-2"></i>11:00 AM</span>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent border-top-0">
-            <button class="btn btn-outline-primary w-100 event-details-btn">More Info</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Event 3 -->
-      <div class="col-lg-4 col-md-6" data-event="graduation" data-city="garowe">
-        <div class="card event-card h-100">
-          <div class="event-image">
-            <img src="https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="University Graduation Ceremony" loading="lazy" width="400" height="250" />
-            <div class="event-overlay"></div>
-            <div class="event-date">Aug 20</div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">University Graduation Ceremony</h5>
-            <p class="card-text mb-3">Join the class of 2025 as they celebrate their academic achievements and look toward the future.</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-map-marker-alt text-primary me-2"></i>Puntland State University</span>
-              <span><i class="far fa-clock text-primary me-2"></i>4:00 PM</span>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent border-top-0">
-            <button class="btn btn-outline-primary w-100 event-details-btn">More Info</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Event 4 -->
-      <div class="col-lg-4 col-md-6" data-event="birthday" data-city="mogadishu">
-        <div class="card event-card h-100">
-          <div class="event-image">
-            <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Children's Birthday Party" loading="lazy" width="400" height="250" />
-            <div class="event-overlay"></div>
-            <div class="event-date">Sep 10</div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Children's Birthday Party</h5>
-            <p class="card-text mb-3">A magical celebration with games, entertainment, and delicious treats for the little ones.</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-map-marker-alt text-primary me-2"></i>Mogadishu Fun Center</span>
-              <span><i class="far fa-clock text-primary me-2"></i>2:00 PM</span>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent border-top-0">
-            <button class="btn btn-outline-primary w-100 event-details-btn">More Info</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Event 5 -->
-      <div class="col-lg-4 col-md-6" data-event="corporate" data-city="galkacyo">
-        <div class="card event-card h-100">
-          <div class="event-image">
-            <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Tech Startup Meetup" loading="lazy" width="400" height="250" />
-            <div class="event-overlay"></div>
-            <div class="event-date">Sep 15</div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Tech Startup Meetup</h5>
-            <p class="card-text mb-3">Connect with fellow entrepreneurs, investors, and tech enthusiasts in this networking event.</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-map-marker-alt text-primary me-2"></i>Galkacyo Innovation Hub</span>
-              <span><i class="far fa-clock text-primary me-2"></i>6:00 PM</span>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent border-top-0">
-            <button class="btn btn-outline-primary w-100 event-details-btn">More Info</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Event 6 -->
-      <div class="col-lg-4 col-md-6" data-event="wedding" data-city="bosaso">
-        <div class="card event-card h-100">
-          <div class="event-image">
-            <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=70" alt="Traditional Wedding Ceremony" loading="lazy" width="400" height="250" />
-            <div class="event-overlay"></div>
-            <div class="event-date">Sep 20</div>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">Traditional Wedding Ceremony</h5>
-            <p class="card-text mb-3">Experience the rich cultural traditions of Somali wedding celebrations.</p>
-            <div class="d-flex justify-content-between align-items-center">
-              <span><i class="fas fa-map-marker-alt text-primary me-2"></i>Bosaso Cultural Center</span>
-              <span><i class="far fa-clock text-primary me-2"></i>7:00 PM</span>
-            </div>
-          </div>
-          <div class="card-footer bg-transparent border-top-0">
-            <button class="btn btn-outline-primary w-100 event-details-btn">More Info</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
 
-<!-- Event Details Modal -->
-<div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header" style="background: linear-gradient(90deg, #684596 0%, #f58f1f 100%); color: #fff;">
-        <h5 class="modal-title" id="eventDetailsModalLabel">Event Details</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6 mb-4 mb-md-0">
-            <img src="" alt="Event Image" class="img-fluid rounded" id="modalEventImage" />
-          </div>
-          <div class="col-md-6">
-            <h4 id="modalEventTitle"></h4>
-            <p id="modalEventDescription"></p>
-            <div class="event-details">
-              <p><i class="fas fa-map-marker-alt text-primary me-2"></i><span id="modalEventLocation"></span></p>
-              <p><i class="far fa-clock text-primary me-2"></i><span id="modalEventTime"></span></p>
-              <p><i class="far fa-calendar text-primary me-2"></i><span id="modalEventDate"></span></p>
-            </div>
-          </div>
+<!-- Events Section -->
+<section id="events" style="padding: 50px 0; background: linear-gradient(135deg, #4a90e2 0%, #2c3e50 100%); margin-top: 30px; margin-bottom: 30px;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 15px;">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <h2 style="color: #ffffff; font-size: 36px; font-weight: bold; margin-bottom: 15px; font-family: 'Poppins', sans-serif; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">Featured Events</h2>
+            <p style="color: #ffffff; font-size: 18px; margin: 0; font-family: 'Poppins', sans-serif; opacity: 0.9;">
+                Discover our upcoming events
+            </p>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn" style="background-color: black; color: white;" data-bs-dismiss="modal">Close</button>
-        <a href="contact.php" class="btn" style="background-color: #ff6600; color: white;">Book Now</a>
-      </div>
+
+        <div class="row g-4">
+            <?php
+            // Fetch events from the database
+            $events = [];
+            $query = "SELECT * FROM events WHERE status = 'active' ORDER BY event_date ASC";
+            $result = mysqli_query($db, $query);
+
+            if ($result) {
+                while ($event = mysqli_fetch_assoc($result)) {
+                    $events[] = $event;
+                }
+                mysqli_free_result($result);
+            }
+            ?>
+        </div>
     </div>
-  </div>
+</section>
+
+<!-- Display Dynamically Loaded Events -->
+<section id="dynamic-events" style="padding: 30px 0; background: #f8f9fa;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 15px;">
+        <div class="row g-4">
+            <?php if (empty($events)): ?>
+                <div class="col-12 text-center">
+                    <p>No events found.</p>
+                </div>
+            <?php else: ?>
+                <?php foreach ($events as $event): ?>
+                    <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="600" data-aos-once="true">
+                        <div class="venue-card">
+                            <div class="venue-img-wrapper">
+                                <?php if (!empty($event['image_path'])): ?>
+                                    <?php 
+                                    $image_url = get_url($event['image_path']);
+                                    echo "<!-- Debug: Image URL (generated by get_url) = " . $image_url . " -->\n";
+                                    ?>
+                                    <img src="<?php echo $image_url; ?>" 
+                                         alt="<?php echo htmlspecialchars($event['title']); ?>" 
+                                         class="img-fluid lazy-load"
+                                         loading="lazy"
+                                         onerror="this.onerror=null; console.log('Image failed to load:', this.src); this.src='<?php echo get_url('assets/images/event-planning.jpg'); ?>';" />
+                                <?php else: ?>
+                                    <img src="<?php echo get_url('assets/images/event-planning.jpg'); ?>" 
+                                         alt="No Image Available" 
+                                         class="img-fluid lazy-load"
+                                         loading="lazy" />
+                                <?php endif; ?>
+
+                                <?php if (!empty($event['price'])): ?>
+                                    <div class="venue-price">$<?php echo number_format($event['price'], 2); ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="venue-info">
+                                <h4 class="venue-name"><?php echo htmlspecialchars($event['title']); ?></h4>
+                                <p class="venue-location">
+                                    <i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($event['location']); ?>
+                                </p>
+                                <p class="venue-date">
+                                    <i class="fas fa-calendar"></i> <?php echo date('F j, Y', strtotime($event['event_date'])); ?>
+                                    <?php if (!empty($event['event_time'])): ?>
+                                        at <?php echo date('g:i A', strtotime($event['event_time'])); ?>
+                                    <?php endif; ?>
+                                </p>
+                                <div class="venue-category">
+                                    <span class="category-tag"><?php echo htmlspecialchars($event['type']); ?></span>
+                                </div>
+                                <?php if (!empty($event['capacity'])): ?>
+                                    <p class="venue-capacity">
+                                        <i class="fas fa-users"></i> Capacity: <?php echo htmlspecialchars($event['capacity']); ?> guests
+                                    </p>
+                                <?php endif; ?>
+                                <button class="btn btn-primary w-100 mt-3 book-event-btn" data-event-id="<?php echo $event['id']; ?>">
+                                    Book Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Modal -->
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 bg-gradient">
+                <h5 class="modal-title fw-bold" id="bookingModalLabel">Complete Your Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="bookingForm" class="needs-validation" novalidate>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="ticketQuantity" name="ticketQuantity" min="1" required>
+                                <label for="ticketQuantity">
+                                    <i class="fas fa-ticket-alt me-2"></i>Number of Tickets
+                                </label>
+                                <div class="invalid-feedback">Please enter the number of tickets</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="fullName" name="fullName" required>
+                                <label for="fullName">
+                                    <i class="fas fa-user me-2"></i>Full Name
+                                </label>
+                                <div class="invalid-feedback">Please enter your full name</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" name="email" required>
+                                <label for="email">
+                                    <i class="fas fa-envelope me-2"></i>Email Address
+                                </label>
+                                <div class="invalid-feedback">Please enter a valid email address</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="tel" class="form-control" id="phone" name="phone" required>
+                                <label for="phone">
+                                    <i class="fas fa-phone me-2"></i>Phone Number
+                                </label>
+                                <div class="invalid-feedback">Please enter your phone number</div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Section -->
+                        <div class="col-12 mt-4">
+                            <h6 class="section-title">
+                                <i class="fas fa-credit-card me-2"></i>Select Payment Method
+                            </h6>
+                            <div class="payment-methods">
+                                <!-- Credit Cards -->
+                                <div class="payment-option">
+                                    <input type="radio" class="btn-check" name="paymentMethod" id="cardPayment" value="card" required>
+                                    <label class="payment-label" for="cardPayment">
+                                        <div class="payment-icons">
+                                            <img src="https://img.icons8.com/color/96/000000/visa.png" alt="Visa" class="payment-icon">
+                                            <img src="https://img.icons8.com/color/96/000000/mastercard.png" alt="MasterCard" class="payment-icon">
+                                            <img src="https://img.icons8.com/color/96/000000/amex.png" alt="American Express" class="payment-icon">
+                                        </div>
+                                        <span>Credit/Debit Card</span>
+                                    </label>
+                                </div>
+
+                                <!-- PayPal -->
+                                <div class="payment-option">
+                                    <input type="radio" class="btn-check" name="paymentMethod" id="paypalPayment" value="paypal" required>
+                                    <label class="payment-label" for="paypalPayment">
+                                        <div class="payment-icons">
+                                            <img src="https://img.icons8.com/color/96/000000/paypal.png" alt="PayPal" class="payment-icon">
+                                        </div>
+                                        <span>PayPal</span>
+                                    </label>
+                                </div>
+
+                                <!-- Mobile Money -->
+                                <div class="payment-option">
+                                    <input type="radio" class="btn-check" name="paymentMethod" id="evcPayment" value="evc" required>
+                                    <label class="payment-label" for="evcPayment">
+                                        <div class="payment-icons">
+                                            <img src="https://img.icons8.com/color/96/000000/mobile-payment.png" alt="EVC Plus" class="payment-icon">
+                                        </div>
+                                        <span>EVC Plus</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <button type="button" class="btn btn-light me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-lock me-2"></i>Complete Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <?php include '../includes/footer.php'; ?>
 
-<!-- Bootstrap JS Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Custom JS -->
-<script src="../assets/js/script.js"></script>
 <script>
-  // Event filtering functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const eventTypeFilter = document.getElementById('eventTypeFilter');
-    const cityFilter = document.getElementById('cityFilter');
-    const dateFilter = document.getElementById('dateFilter');
-    const eventCards = document.querySelectorAll('.event-card');
-
-    function filterEvents() {
-      const selectedType = eventTypeFilter.value;
-      const selectedCity = cityFilter.value;
-      const selectedDate = dateFilter.value;
-
-      eventCards.forEach(card => {
-        const eventType = card.closest('[data-event]').dataset.event;
-        const eventCity = card.closest('[data-city]').dataset.city;
-        const eventDate = card.querySelector('.event-date').textContent;
-
-        const typeMatch = !selectedType || eventType === selectedType;
-        const cityMatch = !selectedCity || eventCity === selectedCity;
-        const dateMatch = !selectedDate || isDateMatch(eventDate, selectedDate);
-
-        card.closest('.col-lg-4').style.display = typeMatch && cityMatch && dateMatch ? 'block' : 'none';
-      });
-    }
-
-    function isDateMatch(eventDate, filter) {
-      // Add date matching logic here
-      return true; // Placeholder
-    }
-
-    eventTypeFilter.addEventListener('change', filterEvents);
-    cityFilter.addEventListener('change', filterEvents);
-    dateFilter.addEventListener('change', filterEvents);
-
-    // Event details modal functionality
-    const eventDetailsModal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
-    const eventDetailsBtns = document.querySelectorAll('.event-details-btn');
-
-    eventDetailsBtns.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const card = this.closest('.event-card');
-        const title = card.querySelector('.card-title').textContent;
-        const description = card.querySelector('.card-text').textContent;
-        const location = card.querySelector('.fa-map-marker-alt').nextSibling.textContent;
-        const time = card.querySelector('.fa-clock').nextSibling.textContent;
-        const date = card.querySelector('.event-date').textContent;
-        const image = card.querySelector('img').src;
-
-        document.getElementById('modalEventTitle').textContent = title;
-        document.getElementById('modalEventDescription').textContent = description;
-        document.getElementById('modalEventLocation').textContent = location;
-        document.getElementById('modalEventTime').textContent = time;
-        document.getElementById('modalEventDate').textContent = date;
-        document.getElementById('modalEventImage').src = image;
-
-        eventDetailsModal.show();
-      });
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize AOS animation library
+    AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true
     });
-  });
+
+    // Handle event booking
+    document.querySelectorAll('.book-event-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const eventId = this.getAttribute('data-event-id');
+            const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+            bookingModal.show();
+        });
+    });
+
+    // Handle form submission
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Add your form submission logic here
+        alert('Thank you for your booking! We will send you a confirmation email shortly.');
+        this.reset();
+        bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
+    });
+});
 </script>
 
-</body>
-</html> 
+<style>
+/* Event Card Styles */
+.venue-card {
+    background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 
+                0 2px 4px -1px rgba(0,0,0,0.06);
+}
+
+.venue-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 
+                0 10px 10px -5px rgba(0,0,0,0.04);
+}
+
+.venue-img-wrapper {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+}
+
+.venue-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.venue-card:hover .venue-img-wrapper img {
+    transform: scale(1.05);
+}
+
+.venue-price {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.venue-info {
+    padding: 20px;
+}
+
+.venue-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #1f2937;
+}
+
+.venue-location, .venue-date {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.venue-category {
+    margin-top: 10px;
+}
+
+.category-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #e5e7eb;
+    color: #4b5563;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Modal Styles */
+.modal-content {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+}
+
+.modal-header.bg-gradient {
+    background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+    color: white;
+    padding: 1.5rem;
+}
+
+/* Payment Methods Styles */
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.payment-option {
+    position: relative;
+}
+
+.payment-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.payment-icons {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    height: 40px;
+    align-items: center;
+}
+
+.payment-icon {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+}
+
+.btn-check:checked + .payment-label {
+    border-color: #4f46e5;
+    background-color: #f5f3ff;
+}
+
+.payment-label:hover {
+    border-color: #4f46e5;
+    transform: translateY(-2px);
+}
+
+.payment-label:hover .payment-icon {
+    transform: scale(1.1);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .payment-methods {
+        grid-template-columns: 1fr;
+    }
+
+    .payment-icons {
+        height: 32px;
+    }
+}
+</style> 

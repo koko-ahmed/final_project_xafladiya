@@ -1,7 +1,7 @@
 <?php
 // Base path configuration
 $base_path = '/Xafladia/';
-$base_url = 'http://localhost' . $base_path;
+$base_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $base_path;
 
 // Database configuration
 $db_host = 'localhost';

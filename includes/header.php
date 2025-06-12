@@ -45,6 +45,10 @@ if (!isset($page_title)) {
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Close button for mobile menu -->
+                <div class="d-flex justify-content-end p-3 d-lg-none">
+                    <button type="button" class="btn-close" aria-label="Close"></button>
+                </div>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="<?php echo get_url('index.php'); ?>">Home</a>
@@ -114,13 +118,64 @@ if (!isset($page_title)) {
         // Handle mobile menu
         var navbarCollapse = document.querySelector('.navbar-collapse');
         var navbarToggler = document.querySelector('.navbar-toggler');
+        var closeButton = navbarCollapse.querySelector('.btn-close');
+
+        // Function to toggle menu and body scroll lock
+        function toggleMobileMenu() {
+            navbarCollapse.classList.toggle('show');
+            navbarToggler.setAttribute('aria-expanded', navbarCollapse.classList.contains('show'));
+            
+            // Toggle body scroll lock
+            if (navbarCollapse.classList.contains('show')) {
+                document.body.style.overflow = 'hidden';
+                // Add a small delay before showing the close button for smooth transition
+                setTimeout(() => {
+                    navbarToggler.style.opacity = '0';
+                    setTimeout(() => {
+                        navbarToggler.style.display = 'none';
+                    }, 300);
+                }, 100);
+            } else {
+                document.body.style.overflow = '';
+                navbarToggler.style.display = 'block';
+                setTimeout(() => {
+                    navbarToggler.style.opacity = '1';
+                }, 50);
+            }
+        }
+
+        // Open/Close menu via hamburger toggler
+        navbarToggler.addEventListener('click', function() {
+            toggleMobileMenu();
+        });
+
+        // Close menu via close button
+        if (closeButton) {
+            closeButton.addEventListener('click', function() {
+                toggleMobileMenu();
+            });
+        }
 
         // Close mobile menu when clicking outside
         document.addEventListener('click', function(event) {
-            var isClickInside = navbarCollapse.contains(event.target) || navbarToggler.contains(event.target);
-            if (!isClickInside && navbarCollapse.classList.contains('show')) {
-                navbarCollapse.classList.remove('show');
+            var isClickInsideNavbar = navbarCollapse.contains(event.target);
+            var isClickOnToggler = navbarToggler.contains(event.target);
+            var isClickOnCloseButton = closeButton && closeButton.contains(event.target);
+
+            if (!isClickInsideNavbar && !isClickOnToggler && !isClickOnCloseButton && navbarCollapse.classList.contains('show')) {
+                toggleMobileMenu();
             }
+        });
+
+        // Close dropdowns when mobile menu closes
+        navbarCollapse.addEventListener('hide.bs.collapse', function () {
+            var openDropdowns = navbarCollapse.querySelectorAll('.dropdown-menu.show');
+            openDropdowns.forEach(function(dropdown) {
+                var dropdownInstance = bootstrap.Dropdown.getInstance(dropdown.previousElementSibling);
+                if (dropdownInstance) {
+                    dropdownInstance.hide();
+                }
+            });
         });
     });
     </script>

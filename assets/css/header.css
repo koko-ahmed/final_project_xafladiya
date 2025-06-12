@@ -80,6 +80,10 @@
     padding: 0.5rem;
     border-radius: var(--border-radius-md);
     background-color: rgba(255, 255, 255, 0.1);
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    z-index: 1000;
 }
 
 .navbar-toggler:focus {
@@ -88,6 +92,12 @@
 
 .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    transition: transform 0.3s ease;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23333'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e");
+    transform: rotate(90deg);
 }
 
 /* Header actions */
@@ -164,40 +174,36 @@
     .navbar-collapse {
         position: fixed;
         top: 0;
-        right: -100%; /* Menu slides from the right */
+        right: -100%;
         width: 80%;
         max-width: 300px;
         height: 100vh;
-        background-color: #ffffff; /* White background for the menu */
+        background-color: #ffffff;
         margin-top: 0;
         padding: var(--spacing-md);
         border-radius: 0;
         box-shadow: var(--shadow-md);
-        transition: right 0.3s ease-in-out; /* Smooth transition for sliding */
-        z-index: 9999; /* Increased z-index to ensure it's on top */
-        isolation: isolate; /* Create a new stacking context */
-        will-change: transform; /* Hint for performance and stacking context */
+        transition: right 0.3s ease-in-out;
+        z-index: 999;
+        overflow-y: auto;
     }
 
     .navbar-collapse.show {
-        right: 0; /* Menu is visible */
+        right: 0;
     }
 
     .navbar-nav .nav-link {
         padding: 0.75rem 1rem;
-        color: #333 !important; /* Dark text for better contrast on white background */
+        color: #333 !important;
     }
 
-    /* Make buttons full width in mobile menu */
+    /* Make buttons full width and equal size in mobile menu */
     .navbar-nav .btn-outline-primary,
     .navbar-nav .btn-primary {
         width: 100%;
         margin: 0.5rem 0;
-    }
-
-    .header-actions {
-        margin-top: var(--spacing-md);
-        justify-content: center;
+        padding: 0.75rem 1rem;
+        text-align: center;
     }
 
     /* Add overlay when menu is open */
@@ -220,6 +226,11 @@
         pointer-events: auto;
     }
 
+    .header-actions {
+        margin-top: var(--spacing-md);
+        justify-content: center;
+    }
+
     /* Adjust dropdown menu for white background */
     .dropdown-menu {
         background-color: #ffffff;
@@ -232,17 +243,6 @@
 
     .dropdown-item:hover {
         background-color: rgba(0, 0, 0, 0.05);
-    }
-
-    /* Style the hamburger icon transformation */
-    .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-        transition: background-image 0.3s ease-in-out, transform 0.3s ease-in-out;
-    }
-
-    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='#333'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e");
-        transform: rotate(90deg); /* Rotate for a smoother cross effect */
     }
 }
 
