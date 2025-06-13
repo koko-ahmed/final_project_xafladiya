@@ -134,14 +134,13 @@ include '../includes/header.php';
                                     ?>
                                     <img src="<?php echo $image_url; ?>" 
                                          alt="<?php echo htmlspecialchars($event['title']); ?>" 
-                                         class="img-fluid lazy-load"
-                                         loading="lazy"
-                                         onerror="this.onerror=null; console.log('Image failed to load:', this.src); this.src='<?php echo get_url('assets/images/event-planning.jpg'); ?>';" />
+                                         class="img-fluid"
+                                         loading="eager" />
                                 <?php else: ?>
                                     <img src="<?php echo get_url('assets/images/event-planning.jpg'); ?>" 
-                                         alt="No Image Available" 
-                                         class="img-fluid lazy-load"
-                                         loading="lazy" />
+                                         alt="<?php echo htmlspecialchars($event['title']); ?>" 
+                                         class="img-fluid"
+                                         loading="eager" />
                                 <?php endif; ?>
 
                                 <?php if (!empty($event['price'])): ?>
