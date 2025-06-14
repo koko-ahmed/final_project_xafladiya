@@ -1,0 +1,348 @@
+/* Hero Section Styles */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  /* Added smooth transition to avoid sudden shifts */
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(245, 143, 31, 0.2) 0%, rgba(231, 81, 36, 0.2) 100%);
+  z-index: 0;
+  /* Make sure overlay stays behind content */
+  border-radius: 12px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  color: #ffffff;
+  padding: 2rem 0;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  letter-spacing: -1px;
+  color: #222222;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.2);
+  line-height: 1.1;
+}
+
+.hero-description {
+  font-size: 1.35rem;
+  margin-bottom: 2rem;
+  color: #333333;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.play-video-btn {
+  display: inline-flex;
+  align-items: center;
+  color: #ffffff;
+  text-decoration: none;
+  transition: transform 0.3s ease, color 0.3s ease;
+  /* Added color transition */
+}
+
+.play-video-btn:hover {
+  transform: scale(1.05);
+  color: #ff5733;
+  /* Bright color change for hover */
+}
+
+.play-icon {
+  width: 50px;
+  height: 50px;
+  background-color: #ff5733;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+}
+
+.hero-img {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  border-radius: 15px;
+  /* Added a bit of rounded corners for a smooth look */
+}
+
+.hero-img:hover {
+  transform: scale(1.02);
+  /* Slight zoom effect for the image */
+}
+
+/* Dark Mode Styles */
+.dark-mode .hero-content {
+  color: #ffffff;
+}
+
+.dark-mode .play-video-btn {
+  color: #ffffff;
+}
+
+.hero-section {
+  padding: 120px 0 60px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.hero-btn {
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.hero-btn-primary {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+}
+
+.hero-btn-primary:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.hero-btn-secondary {
+  background-color: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+.hero-btn-secondary:hover {
+  background-color: #fff;
+  color: #333;
+  transform: translateY(-2px);
+}
+
+.hero-img-container {
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease;
+}
+
+.hero-img-container:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Quick Access Cards */
+.quick-access-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  position: relative;
+}
+
+.quick-access-section h2 {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #222222;
+}
+
+.quick-access-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+.quick-access-card:hover {
+  transform: translateY(-8px);
+}
+
+.quick-access-card .card {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.quick-access-card:hover .card {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-5px);
+}
+
+.quick-access-icon {
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 26px;
+  margin: 0 auto;
+  background: #fff;
+  color: #FF6B6B;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.2);
+  border: 2px solid #FF6B6B;
+}
+
+.quick-access-card:hover .quick-access-icon {
+  transform: scale(1.1);
+  background: #FF6B6B;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+}
+
+.quick-access-card .card-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #222222;
+}
+
+.quick-access-card .card-text {
+  color: #444444;
+  font-size: 0.85rem;
+}
+
+/* Dark Mode Styles */
+.dark-mode .hero-section {
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+}
+
+.dark-mode .hero-section h1,
+.dark-mode .hero-section h2 {
+  color: #f7fafc;
+}
+
+.dark-mode .hero-section p {
+  color: #e2e8f0;
+}
+
+.dark-mode .quick-access-card .card {
+  background: #2d3748;
+  border-color: #4a5568;
+}
+
+.dark-mode .quick-access-card .card-title {
+  color: #f7fafc;
+}
+
+.dark-mode .quick-access-card .card-text {
+  color: #e2e8f0;
+}
+
+.dark-mode .hero-description {
+  color: #e2e8f0;
+}
+
+.dark-mode .quick-access-icon {
+  background: #2d3748;
+  color: #FF6B6B;
+  border-color: #FF6B6B;
+  box-shadow: 0 5px 15px rgba(255, 107, 107, 0.15);
+}
+
+.dark-mode .quick-access-card:hover .quick-access-icon {
+  background: #FF6B6B;
+  color: #f7fafc;
+}
+
+/* Responsive Styles */
+@media (max-width: 991.98px) {
+  .hero-section {
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 2.8rem;
+  }
+
+  .hero-section .col-lg-6:first-child {
+    margin-bottom: 2rem;
+  }
+
+  .hero-section .d-flex {
+    justify-content: center;
+  }
+
+  .hero-img-container {
+    max-width: 80%;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .hero-section {
+    padding: 60px 0 40px;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+  }
+
+  .hero-description {
+    font-size: 1.1rem;
+  }
+
+  .hero-section .btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .quick-access-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .quick-access-icon {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+  }
+
+  .quick-access-card .card-title {
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,66 @@
+/* Parallax Section Styles */
+.parallax-section {
+  position: relative;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.parallax-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.parallax-content {
+  position: relative;
+  z-index: 1;
+  color: #ffffff;
+  padding: 4rem 0;
+}
+
+.parallax-content h2 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.parallax-content .lead {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.parallax-content .btn-primary {
+  background-color: #ff5733;
+  border-color: #ff5733;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.parallax-content .btn-primary:hover {
+  background-color: #e64a2e;
+  border-color: #e64a2e;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark Mode Styles */
+.dark-mode .parallax-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.dark-mode .parallax-content {
+  color: #ffffff;
+} 

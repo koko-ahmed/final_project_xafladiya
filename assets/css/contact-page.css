@@ -1,0 +1,246 @@
+/*-----------------------------------------------------------------------------------*
+
+    Contact Page Styles
+
+*-----------------------------------------------------------------------------------*/
+
+/* Contact Hero Section */
+.contact-hero-section {
+    background: linear-gradient(135deg, #f8f9fa, #e0e0e0); /* Light gradient background */
+    padding: 80px 0; /* More vertical space */
+    color: #333;
+    text-align: center;
+}
+
+.contact-hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #2c3e50; /* Darker heading color */
+    margin-bottom: 20px;
+}
+
+.contact-hero-section p.lead {
+    font-size: 1.25rem;
+    line-height: 1.8;
+    max-width: 700px;
+    margin: 0 auto 40px auto;
+    color: #555;
+}
+
+/* Contact Info Section */
+.contact-info .contact-icon {
+    font-size: 1.5rem;
+    color: #007bff; /* Primary color for icons */
+    min-width: 40px;
+    text-align: center;
+}
+
+.contact-info h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.contact-info p {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.social-media .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f0f2f5;
+    color: #007bff;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.social-media .social-link:hover {
+    background-color: #007bff;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Contact Form Card */
+.card {
+    border-radius: 15px; /* Softer rounded corners */
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); /* More pronounced shadow */
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Subtle lift effect */
+}
+
+.card-body {
+    padding: 40px; /* More padding inside the card */
+}
+
+.card-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 8px;
+}
+
+.form-control {
+    border-radius: 8px; /* Rounded input fields */
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #007bff; /* Highlight on focus */
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25); /* Bootstrap-like focus glow */
+}
+
+textarea.form-control {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.btn-primary {
+    background-color: #007bff; /* Consistent primary button color */
+    border-color: #007bff;
+    padding: 12px 30px; /* Larger button */
+    font-size: 1.1rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Success Message */
+.success-message .alert-success {
+    background-color: #d4edda; /* Lighter success background */
+    color: #155724; /* Darker success text */
+    border-color: #c3e6cb;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+/* Map Section */
+.map-section {
+    padding: 60px 0;
+    background-color: #f8f9fa;
+}
+
+.map-section h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.map-section p.lead {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 40px;
+}
+
+.map-container {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.map-container img {
+    border-radius: 15px; /* Apply border-radius to the image itself */
+    display: block; /* Remove extra space below image */
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    .contact-hero-section {
+        padding: 60px 0;
+    }
+
+    .contact-hero-section h1 {
+        font-size: 2.8rem;
+    }
+
+    .contact-hero-section p.lead {
+        font-size: 1.1rem;
+    }
+
+    .card-body {
+        padding: 30px;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+    }
+
+    .map-section {
+        padding: 40px 0;
+    }
+
+    .map-section h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .contact-hero-section {
+        padding: 40px 0;
+    }
+
+    .contact-hero-section h1 {
+        font-size: 2.2rem;
+    }
+
+    .contact-hero-section p.lead {
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+
+    .card-body {
+        padding: 25px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+    }
+
+    .contact-info .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    .contact-info .d-flex > div {
+        margin-left: 0 !important;
+        margin-top: 10px; /* Space between icon and text on small screens */
+    }
+}
+
+/* Subtle animations for AOS elements */
+[data-aos] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: transform 0.8s ease-out, opacity 0.8s ease-out; /* Match AOS duration */
+}
+
+[data-aos].aos-animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+ 

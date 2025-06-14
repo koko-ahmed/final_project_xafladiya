@@ -1,0 +1,143 @@
+<!-- Navbar Component -->
+<link rel="stylesheet" href="../css/navbar.css" />
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="../../index.html" id="home-link">
+      <img
+        src="../../assets/images/logo/Xafladiya Logo_1.png"
+        alt="Xafladia Logo"
+        height="40"
+        id="navbar-logo"
+      />
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="../../index.html" id="nav-home">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../pages/events.html" id="nav-events"
+            >Events</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../pages/services.html" id="nav-services"
+            >Services</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../pages/about.html" id="nav-about"
+            >About</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../pages/gallery.html" id="nav-gallery"
+            >Gallery</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="../../pages/cameraman.html"
+            id="nav-cameraman"
+            >Cameraman</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../pages/hotels.html" id="nav-hotels"
+            >Hotels</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../../pages/contact.html" id="nav-contact"
+            >Contact</a
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<script src="../js/navbar.js"></script>
+
+<script>
+  // Fix the paths based on the current location
+  document.addEventListener("DOMContentLoaded", function () {
+    // Get the current page path
+    const path = window.location.pathname;
+    const isRoot =
+      path === "/" ||
+      path.endsWith("index.html") ||
+      path === "" ||
+      path.endsWith("/");
+
+    // Determine if we're in the pages directory
+    const inPagesDir = path.includes("/pages/") || path.includes("\\pages\\");
+
+    // Based on our location, update all links properly
+    if (inPagesDir) {
+      // If we're in the pages directory, we need to navigate up one level for home
+      document.querySelectorAll("#home-link, #nav-home").forEach((el) => {
+        el.setAttribute("href", "../index.html");
+      });
+
+      // Fix all other links
+      document.querySelectorAll("a.nav-link").forEach((link) => {
+        const href = link.getAttribute("href");
+        if (href === "/") {
+          link.setAttribute("href", "../index.html");
+        } else if (href.startsWith("/pages/")) {
+          // For other page links, make them relative to current position
+          link.setAttribute("href", "." + href.substring(6)); // Remove "/pages" and add "."
+        }
+      });
+
+      // Fix logo path
+      const logo = document.getElementById("navbar-logo");
+      if (logo) {
+        const src = logo.getAttribute("src");
+        if (src.startsWith("/assets/")) {
+          logo.setAttribute("src", "../" + src.substring(1)); // Make path relative to pages dir
+        }
+      }
+    } else {
+      // If we're at the root, use standard paths
+      document.querySelectorAll("#home-link, #nav-home").forEach((el) => {
+        el.setAttribute("href", "index.html");
+      });
+
+      document.querySelectorAll("a.nav-link").forEach((link) => {
+        const href = link.getAttribute("href");
+        if (href === "/") {
+          link.setAttribute("href", "index.html");
+        } else if (href.startsWith("/pages/")) {
+          link.setAttribute("href", href.substring(1)); // Remove leading slash
+        }
+      });
+
+      // Fix logo path
+      const logo = document.getElementById("navbar-logo");
+      if (logo) {
+        const src = logo.getAttribute("src");
+        if (src.startsWith("/assets/")) {
+          logo.setAttribute("src", src.substring(1)); // Remove leading slash
+        }
+      }
+    }
+
+    // Log for debugging
+    console.log("Navbar paths updated. In pages directory: " + inPagesDir);
+  });
+</script>

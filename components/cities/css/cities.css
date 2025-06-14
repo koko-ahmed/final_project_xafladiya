@@ -1,0 +1,124 @@
+/* Cities Section Styles */
+.modern-section {
+  background-color: #ffffff;
+  padding: 5rem 0;
+}
+
+.modern-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 1rem;
+}
+
+.modern-divider {
+  width: 80px;
+  height: 3px;
+  background-color: #ff5733;
+  margin: 1.5rem auto;
+}
+
+.modern-subtitle {
+  color: #000000;
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+}
+
+.modern-card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.modern-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.city-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.city-img {
+  transition: transform 0.5s ease;
+}
+
+.modern-card:hover .city-img {
+  transform: scale(1.1);
+}
+
+.city-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+  display: flex;
+  align-items: flex-end;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modern-card:hover .city-overlay {
+  opacity: 1;
+}
+
+.city-name {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  margin-bottom: 0;
+}
+
+.modern-text {
+  color: #000000;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.modern-btn {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  background-color: #ff5733;
+  color: #ffffff;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  font-weight: 600;
+}
+
+.modern-btn:hover {
+  background-color: #e64a2e;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark Mode Styles */
+.dark-mode .modern-section {
+  background-color: #1a1a1a;
+}
+
+.dark-mode .modern-title {
+  color: #ffffff;
+}
+
+.dark-mode .modern-subtitle {
+  color: #cccccc;
+}
+
+.dark-mode .modern-card {
+  background-color: #2d2d2d;
+}
+
+.dark-mode .modern-text {
+  color: #cccccc;
+} 
