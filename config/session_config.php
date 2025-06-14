@@ -26,4 +26,9 @@ function check_session_timeout() {
 
 // Check session timeout on every page load
 check_session_timeout();
+
+// Function to check if admin is logged in
+function is_admin_logged_in() {
+    return isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true;
+}
 ?> 

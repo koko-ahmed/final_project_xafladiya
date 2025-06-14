@@ -1,5 +1,12 @@
 <?php
+require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/session_config.php';
+
+// If admin is already logged in, redirect to dashboard
+if (is_admin_logged_in()) {
+    header('Location: ' . get_url('admin/dashboard.php'));
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
