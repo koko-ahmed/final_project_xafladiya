@@ -24,14 +24,9 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
               filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
             "
           />
-          <p
-            class="text-light mb-4 fw-normal"
-            style="font-size: 0.95rem; line-height: 1.6; color: #ffffff"
-            data-i18n="footer_description"
-          >
-            Your premier event planning platform in Somalia. Making special
-            moments unforgettable since 2020.
-          </p>
+          <div class="footer-description">
+            <p>Your trusted partner for all event planning needs in Somalia. We provide comprehensive solutions to make your events memorable and successful.</p>
+          </div>
         </div>
 
         <!-- Social Media -->
@@ -62,7 +57,7 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
             <h6
               class="footer-title text-light mb-4 fw-semibold position-relative d-inline-block"
             >
-              <span data-i18n="quick_links">Quick Links</span>
+              <span>Quick Links</span>
               <span
                 style="
                   position: absolute;
@@ -90,7 +85,6 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
                   <a
                     href="' . $link['link'] . '"
                     class="footer-link text-light text-decoration-none fw-normal d-block py-1"
-                    data-i18n="nav_' . strtolower($link['title']) . '"
                     style="transition: all 0.2s ease; color: #ffffff"
                     >' . $link['title'] . '</a
                   >
@@ -105,7 +99,7 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
             <h6
               class="footer-title text-light mb-4 fw-semibold position-relative d-inline-block"
             >
-              <span data-i18n="our_services">Our Services</span>
+              <span>Our Services</span>
               <span
                 style="
                   position: absolute;
@@ -132,7 +126,6 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
                   <a
                     href="' . $service['link'] . '"
                     class="footer-link text-light text-decoration-none fw-normal d-block py-1"
-                    data-i18n="' . strtolower(str_replace(' ', '_', $service['title'])) . '"
                     style="transition: all 0.2s ease; color: #ffffff"
                     >' . $service['title'] . '</a
                   >
@@ -147,7 +140,7 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
             <h6
               class="footer-title text-light mb-4 fw-semibold position-relative d-inline-block"
             >
-              <span data-i18n="contact_info">Contact Info</span>
+              <span>Contact Info</span>
               <span
                 style="
                   position: absolute;
@@ -171,7 +164,6 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
                 </div>
                 <span
                   class="text-light ms-2 fw-normal"
-                  data-i18n="address"
                   style="font-size: 0.9rem; color: #ffffff"
                   >Garowe, Puntland</span
                 >

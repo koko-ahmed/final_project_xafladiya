@@ -7,11 +7,9 @@ include '../includes/header.php';
 <!-- Services Hero Section -->
 <section class="modern-hero" style="padding-top: 100px">
   <div class="container text-center position-relative" style="z-index: 1">
-    <h1 class="modern-title display-4 mb-4 text-dark" data-i18n="our_services_title">Our Services</h1>
+    <h1 class="modern-title display-4 mb-4 text-dark">Our Services</h1>
     <div class="modern-divider modern-divider-center"></div>
-    <p class="modern-text lead mb-5 text-dark" data-i18n="comprehensive_solutions">
-      Comprehensive solutions for planning and managing all your special events
-    </p>
+    <p class="modern-text lead mb-5 text-dark">Comprehensive event solutions tailored to your needs</p>
     <div class="d-flex justify-content-center gap-3">
       <a href="#core-services" class="btn btn-outline-primary">Explore Services</a>
       <a href="contact.php" class="btn btn-outline-primary">Contact Us</a>
@@ -23,9 +21,9 @@ include '../includes/header.php';
 <section class="modern-section py-5" id="core-services" style="background-color:rgb(104, 85, 150); color: #f8f9fa;">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="modern-title" data-i18n="core_services" style="color: #f8f9fa;">Core Services</h2>
+      <h2 class="modern-title" style="color: #f8f9fa;">Core Services</h2>
       <div class="modern-divider modern-divider-center"></div>
-      <p class="modern-subtitle" data-i18n="everything_needed" style="color: #f8f9fa;">Everything you need to have a successful event</p>
+      <p class="modern-subtitle" style="color: #f8f9fa;">Everything you need to have a successful event</p>
     </div>
     <div class="row g-4">
       <div class="col-md-6 col-lg-4">
@@ -33,11 +31,9 @@ include '../includes/header.php';
           <div class="service-icon-circle mb-3">
             <i class="fas fa-map-marker-alt fa-2x"></i>
           </div>
-          <h3 class="card-title" data-i18n="venue_booking_service">Venue Booking</h3>
-          <p class="card-text" data-i18n="venue_description_full">
-            Find and book the perfect venue for your event from our curated selection across major cities in Somalia. Filter by location, capacity, facilities, and price to match your specific needs.
-          </p>
-          <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#venueModal" data-i18n="learn_more">Learn More</button>
+          <h3 class="card-title">Venue Booking</h3>
+          <p class="card-text">Find and book the perfect venue for your event</p>
+          <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#venueModal">Learn More</button>
         </div>
       </div>
       <div class="col-md-6 col-lg-4">
@@ -45,11 +41,9 @@ include '../includes/header.php';
           <div class="service-icon-circle mb-3">
             <i class="fas fa-camera fa-2x"></i>
           </div>
-          <h3 class="card-title" data-i18n="professional_photography">Professional Photography</h3>
-          <p class="card-text" data-i18n="photography_description">
-            Capture your special moments with our network of professional photographers. Browse portfolios, compare pricing, and book the perfect photographer for your event, directly through our platform.
-          </p>
-          <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#photographyModal" data-i18n="learn_more">Learn More</button>
+          <h3 class="card-title">Professional Photography</h3>
+          <p class="card-text">Capture your special moments with our professional photography services</p>
+          <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#photographyModal">Learn More</button>
         </div>
       </div>
       <div class="col-md-6 col-lg-4">
@@ -57,11 +51,9 @@ include '../includes/header.php';
           <div class="service-icon-circle mb-3">
             <i class="fas fa-tasks fa-2x"></i>
           </div>
-          <h3 class="card-title" data-i18n="event_planning">Event Planning</h3>
-          <p class="card-text" data-i18n="planning_description">
-            Use our comprehensive planning tools to organize every aspect of your event. Create schedules, manage guest lists, communicate with service providers, and more.
-          </p>
-          <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#planningModal" data-i18n="learn_more">Learn More</button>
+          <h3 class="card-title">Event Planning</h3>
+          <p class="card-text">Let us handle the details of your event planning</p>
+          <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#planningModal">Learn More</button>
         </div>
       </div>
       <div class="col-md-6 col-lg-4">
@@ -69,10 +61,8 @@ include '../includes/header.php';
           <div class="service-icon-circle mb-3">
             <i class="fas fa-users fa-2x"></i>
           </div>
-          <h3 class="card-title" data-i18n="guest_management_title">Guest Management</h3>
-          <p class="card-text" data-i18n="guest_description">
-            Simplify guest management with our digital invitation system. Create and send invitations, track RSVPs, manage seating arrangements, and communicate important details to your guests.
-          </p>
+          <h3 class="card-title">Guest Management</h3>
+          <p class="card-text">Efficient guest management and check-in services</p>
           <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#guestModal">Learn More</button>
         </div>
       </div>
@@ -81,10 +71,8 @@ include '../includes/header.php';
           <div class="service-icon-circle mb-3">
             <i class="fas fa-utensils fa-2x"></i>
           </div>
-          <h3 class="card-title" data-i18n="catering_services">Catering Services</h3>
-          <p class="card-text" data-i18n="catering_description">
-            Find the perfect caterer for your event, from traditional Somali cuisine to international options. Compare menus, pricing, and reviews to make the best choice for your guests.
-          </p>
+          <h3 class="card-title">Catering Services</h3>
+          <p class="card-text">Delicious food and beverage services for your event</p>
           <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#cateringModal">Learn More</button>
         </div>
       </div>
@@ -93,10 +81,8 @@ include '../includes/header.php';
           <div class="service-icon-circle mb-3">
             <i class="fas fa-paint-brush fa-2x"></i>
           </div>
-          <h3 class="card-title" data-i18n="decoration_setup">Decoration Setup</h3>
-          <p class="card-text" data-i18n="decoration_description">
-            Transform your venue with our decoration services. Choose from a variety of themes and styles, and let our team create the perfect atmosphere for your event.
-          </p>
+          <h3 class="card-title">Decoration Setup</h3>
+          <p class="card-text">Beautiful decorations to make your event special</p>
           <button class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#decorationModal">Learn More</button>
         </div>
       </div>

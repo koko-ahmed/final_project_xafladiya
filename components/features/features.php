@@ -11,10 +11,8 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
 <section id="features" class="features-section py-5">
   <div class="container">
     <div class="section-title text-center" data-aos="fade-up">
-      <h2 data-i18n="our_services">Our Services</h2>
-      <p data-i18n="services_description">
-        We provide complete event management solutions tailored to your needs.
-      </p>
+      <h2>Our Services</h2>
+      <p>Discover our comprehensive range of event services</p>
     </div>
     <div class="row g-4">
       <?php
@@ -70,9 +68,9 @@ $base_path = isset($is_home) && $is_home ? '' : '../../';
               <div class="feature-icon">
                 <i class="fas fa-' . $feature['icon'] . ' fa-2x"></i>
               </div>
-              <h3 class="card-title" data-i18n="' . strtolower(str_replace(' ', '_', $feature['title'])) . '">' . $feature['title'] . '</h3>
-              <p class="card-text" data-i18n="' . strtolower(str_replace(' ', '_', $feature['title'])) . '_description">' . $feature['description'] . '</p>
-              <a href="' . $feature['link'] . '" class="btn btn-outline-primary mt-3" data-i18n="learn_more">Learn More</a>
+              <h3 class="card-title">' . $feature['title'] . '</h3>
+              <p class="card-text">' . $feature['description'] . '</p>
+              <a href="' . $feature['link'] . '" class="btn btn-outline-primary mt-3">Learn More</a>
             </div>
           </div>
         </div>';

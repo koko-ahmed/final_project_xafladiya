@@ -43,7 +43,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </li>
             <li class="nav-item">
                 <a class="nav-link <?php echo strpos($current_page, 'user') !== false ? 'active' : ''; ?>" 
-                   href="<?php echo get_url('admin/dashboard.php'); ?>">
+                   href="<?php echo get_url('admin/dashboard.php?section=users'); ?>">
                     <i class="fas fa-users me-2"></i>
                     Users
                 </a>

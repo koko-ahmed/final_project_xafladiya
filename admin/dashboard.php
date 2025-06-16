@@ -18,6 +18,50 @@ require_once __DIR__ . '/../includes/db.php'; // Ensure db connection is availab
 
             <p>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</p>
 
+            <?php if (isset($_GET['section']) && $_GET['section'] === 'users'): ?>
+                <!-- Users Table Section -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card modern-card">
+                            <div class="card-body">
+                                <h5 class="card-title modern-title">Registered Users</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Username</th>
+                                                <th>Email</th>
+                                                <th>Created At</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $sql = "SELECT id, username, email, created_at FROM users";
+                                            $result = mysqli_query($db, $sql);
+                                            if ($result && mysqli_num_rows($result) > 0):
+                                                while($row = mysqli_fetch_assoc($result)):
+                                            ?>
+                                                <tr>
+                                                    <td><?php echo htmlspecialchars($row['id']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['username']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                                    <td><?php echo htmlspecialchars($row['created_at']); ?></td>
+                                                </tr>
+                                            <?php
+                                                endwhile;
+                                            else:
+                                            ?>
+                                                <tr><td colspan="4">No users found.</td></tr>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
             <div class="row mt-4">
                 <div class="col-md-4 mb-4">
                     <div class="card modern-card">
@@ -56,6 +100,7 @@ require_once __DIR__ . '/../includes/db.php'; // Ensure db connection is availab
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
         </main>
     </div>
 </div>

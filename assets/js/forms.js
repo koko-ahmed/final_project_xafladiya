@@ -3,8 +3,6 @@
  */
 
 import { isValidEmail, showNotification } from './utils.js';
-import { getCurrentLanguage } from './i18n.js';
-import { languages } from './translations.js';
 
 /**
  * Initializes contact form validation and submission
@@ -76,9 +74,7 @@ function validateEmail(input) {
     updateValidationUI(input, isValid);
     
     if (!isValid && value !== '') {
-        const lang = getCurrentLanguage();
-        const errorMessage = languages[lang].invalid_email || 'Please enter a valid email address';
-        showFieldError(input, errorMessage);
+        showFieldError(input, 'Please enter a valid email address');
     }
     
     return isValid;
@@ -99,9 +95,7 @@ function validateField(input, minLength = 1) {
     updateValidationUI(input, isValid);
     
     if (!isValid && value !== '') {
-        const lang = getCurrentLanguage();
-        const errorMessage = languages[lang].field_too_short || `Minimum ${minLength} characters required`;
-        showFieldError(input, errorMessage);
+        showFieldError(input, `Minimum ${minLength} characters required`);
     }
     
     return isValid;
@@ -162,9 +156,7 @@ function simulateFormSubmission(form) {
         submitButton.innerHTML = originalButtonText;
         
         // Show success message
-        const lang = getCurrentLanguage();
-        const successMessage = languages[lang].message_sent_success || 'Your message has been sent successfully!';
-        showNotification(successMessage, 'success');
+        showNotification('Your message has been sent successfully!', 'success');
         
         // Show thank you modal if it exists
         const thankYouModal = document.getElementById('contactSuccess');
@@ -191,9 +183,7 @@ export function initNewsletterForm(formSelector = '.newsletter-form') {
             
             if (validateEmail(emailInput)) {
                 // Show success message
-                const lang = getCurrentLanguage();
-                const successMessage = languages[lang].newsletter_success || 'Thanks for subscribing to our newsletter!';
-                showNotification(successMessage, 'success');
+                showNotification('Thanks for subscribing to our newsletter!', 'success');
                 
                 // Reset form
                 this.reset();

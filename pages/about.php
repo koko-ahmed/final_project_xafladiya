@@ -2,6 +2,29 @@
 $page_title = 'Xafladiya - About Us';
 include '../includes/header.php';
 ?>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const counters = document.querySelectorAll(".count");
+
+    counters.forEach(counter => {
+      const update = () => {
+        const target = +counter.getAttribute("data-target");
+        const current = +counter.innerText;
+        const step = Math.ceil(target / 100); // feel free to adjust
+
+        if (current < target) {
+          counter.innerText = `${Math.min(current + step, target)}`;
+          setTimeout(update, 20);
+        } else {
+          counter.innerText = target;
+        }
+      };
+
+      update();
+    });
+  });
+</script>
+
 
 <!-- About Hero Section with Parallax Background -->
 <section class="parallax-section" style="background-image: url('https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');">
@@ -13,21 +36,23 @@ include '../includes/header.php';
           <h1 class="display-3 fw-bold mb-4 text-white">About Xafladiya</h1>
           <p class="lead text-white mb-4">Your Ultimate Event Management Platform in Somalia</p>
           <div class="d-inline-block bg-white p-2 rounded-pill">
-            <div class="d-flex justify-content-around">
-              <div class="px-3 py-1 border-end border-2">
-                <h2 class="h1 fw-bold text-primary mb-0">500+</h2>
-                <p class="mb-0">Events</p>
-              </div>
-              <div class="px-3 py-1 border-end border-2">
-                <h2 class="h1 fw-bold text-primary mb-0">100+</h2>
-                <p class="mb-0">Venues</p>
-              </div>
-              <div class="px-3 py-1">
-                <h2 class="h1 fw-bold text-primary mb-0">50+</h2>
-                <p class="mb-0">Cameramen</p>
-              </div>
-            </div>
-          </div>
+            <div class="d-inline-block bg-white p-2 rounded-pill">
+  <div class="d-flex justify-content-around">
+    <div class="px-3 py-1 border-end border-2">
+      <h2 class="h1 fw-bold text-primary mb-0"><span class="count" data-target="500">0</span>+</h2>
+      <p class="mb-0">Events</p>
+    </div>
+    <div class="px-3 py-1 border-end border-2">
+      <h2 class="h1 fw-bold text-primary mb-0"><span class="count" data-target="100">0</span>+</h2>
+      <p class="mb-0">Venues</p>
+    </div>
+    <div class="px-3 py-1">
+      <h2 class="h1 fw-bold text-primary mb-0"><span class="count" data-target="50">0</span>+</h2>
+      <p class="mb-0">Cameramen</p>
+    </div>
+  </div>
+</div>
+
         </div>
       </div>
     </div>
