@@ -239,8 +239,9 @@ if ($result) {
                     <label for="professional" class="form-label">Preferred Professional</label>
                     <select class="form-select" id="professional" name="professional">
                       <option value="">Select a professional</option>
-                      <?php foreach ($photographers as $photographer): ?>
-                          <option value="<?php echo htmlspecialchars($photographer['name']); ?>"><?php echo htmlspecialchars($photographer['name']); ?></option>
+                      <?php foreach (
+                        $photographers as $photographer): ?>
+                        <option value="<?php echo $photographer['id']; ?>"><?php echo htmlspecialchars($photographer['name']); ?></option>
                       <?php endforeach; ?>
                     </select>
                   </div>

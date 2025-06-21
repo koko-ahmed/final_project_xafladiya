@@ -1,0 +1,25 @@
+Handler called at 2025-06-21 17:47:38
+POST: Array
+(
+    [name] => Kawsar Ahmed Abdi
+    [email] => kawsarkaaba37@gmail.com
+    [phone] => 907569914
+    [service] => photography
+    [professional] => cbdismd
+    [date] => 2025-07-02
+    [message] => jfy
+)
+
+SQL Error: Cannot add or update a child row: a foreign key constraint fails (`xafladia_db`.`photographer_bookings`, CONSTRAINT `photographer_bookings_ibfk_1` FOREIGN KEY (`professional_id`) REFERENCES `photographers` (`id`) ON DELETE SET NULL)
+Handler called at 2025-06-21 17:51:11
+POST: Array
+(
+    [name] => Kawsar Ahmed Abdi
+    [email] => Kawsarladan2024@gmail.com
+    [phone] => 907996827
+    [service] => photography
+    [professional] => 9
+    [date] => 2025-07-11
+    [message] => n
+)
+
