@@ -1,4 +1,8 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/db.php';
 
@@ -7,6 +11,19 @@ $current_page = isset($current_page) ? $current_page : '';
 
 if (!isset($page_title)) {
     $page_title = $site_name . ' - ' . $site_description;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_message'], $_POST['booking_id'])) {
+    $booking_id = (int)$_POST['booking_id'];
+    $admin_message = mysqli_real_escape_string($db, $_POST['admin_message']);
+    $update_query = "UPDATE photographer_bookings SET message = '$admin_message' WHERE id = $booking_id";
+    if (mysqli_query($db, $update_query)) {
+        $message = 'Message updated successfully.';
+        $message_type = 'success';
+    } else {
+        $message = 'Error updating message: ' . mysqli_error($db);
+        $message_type = 'danger';
+    }
 }
 ?>
 <!DOCTYPE html>

@@ -1,6 +1,8 @@
 <?php
-// Get the current page name for active state
-$current_page = basename($_SERVER['PHP_SELF'], '.php');
+// Debug: Show session info
+echo '<pre style="position:absolute;z-index:9999;background:#fff;color:#000;">';
+print_r($_SESSION);
+echo '</pre>';
 ?>
 <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
   <div class="container">
@@ -44,9 +46,26 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         <li class="nav-item">
           <a class="nav-link <?php echo $current_page === 'contact' ? 'active' : ''; ?>" href="<?php echo $is_home ? 'pages/contact.php' : '../contact.php'; ?>" id="nav-contact">Contact</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link <?php echo $current_page === 'login' ? 'active' : ''; ?>" href="<?php echo $is_home ? 'pages/login.php' : '../login.php'; ?>" id="nav-login">Login</a>
-        </li>
+        <?php if(isset($_SESSION['user_id'])): ?>
+          <li class="nav-item dropdown ms-3">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle me-1"></i><?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['email']); ?>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="<?php echo $is_home ? 'pages/profile.php' : '../profile.php'; ?>"><i class="fas fa-user me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="<?php echo $is_home ? 'pages/mybookings.php' : '../mybookings.php'; ?>"><i class="fas fa-calendar-alt me-2"></i>My Bookings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="<?php echo $is_home ? 'includes/logout.php' : '../includes/logout.php'; ?>"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+            </ul>
+          </li>
+        <?php else: ?>
+          <li class="nav-item ms-3">
+            <a class="nav-link btn btn-outline-primary px-3" href="<?php echo $is_home ? 'pages/login.php' : '../login.php'; ?>">Login</a>
+          </li>
+          <li class="nav-item ms-2">
+            <a class="nav-link btn btn-primary px-3" href="<?php echo $is_home ? 'pages/register.php' : '../register.php'; ?>">Register</a>
+          </li>
+        <?php endif; ?>
       </ul>
     </div>
   </div>

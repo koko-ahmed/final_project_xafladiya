@@ -48,44 +48,6 @@ include '../includes/header.php';
     </div>
 </section>
 
-<!-- Search & Filter Section -->
-<section class="search-section py-4 bg-light">
-    <div class="container">
-        <div class="search-wrapper">
-            <div class="row g-3">
-                <div class="col-lg-3 col-md-6">
-                    <select class="form-select" id="eventCategory">
-                        <option value="">Event Category</option>
-                        <option value="wedding">Wedding</option>
-                        <option value="graduation">Graduation</option>
-                        <option value="corporate">Corporate</option>
-                        <option value="birthday">Birthday</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <select class="form-select" id="location">
-                        <option value="">Location</option>
-                        <option value="mogadishu">Mogadishu</option>
-                        <option value="hargeisa">Hargeisa</option>
-                        <option value="bosaso">Bosaso</option>
-                        <option value="garowe">Garowe</option>
-                        <option value="kismayo">Kismayo</option>
-                    </select>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <input type="date" class="form-control" id="eventDate" placeholder="Event Date">
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <button class="btn btn-primary w-100 search-btn">
-                        <i class="fas fa-search me-2"></i>Search Events
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Events Section -->
 <section id="events" style="padding: 50px 0; background: linear-gradient(135deg, #4a90e2 0%, #2c3e50 100%); margin-top: 30px; margin-bottom: 30px;">
     <div style="max-width: 1200px; margin: 0 auto; padding: 0 15px;">
@@ -284,35 +246,72 @@ include '../includes/header.php';
 
 <?php include '../includes/footer.php'; ?>
 
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS Animation Library -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<!-- Custom JS -->
+<script src="<?php echo get_url('assets/js/main.js'); ?>"></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize AOS animation library
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true
-    });
+  // Initialize AOS
+  AOS.init({
+    duration: 1000,
+    once: true
+  });
 
-    // Handle event booking
-    document.querySelectorAll('.book-event-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const eventId = this.getAttribute('data-event-id');
-            const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
-            bookingModal.show();
-        });
-    });
+  // Handle service booking buttons
+  $('.book-btn').click(function() {
+    var service = $(this).data('service');
+    $('#service').val(service);
+    $('html, body').animate({
+      scrollTop: $('#booking').offset().top - 100
+    }, 500);
+  });
 
-    // Handle form submission
-    document.getElementById('bookingForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Add your form submission logic here
-        alert('Thank you for your booking! We will send you a confirmation email shortly.');
-        this.reset();
-        bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
+  // Handle professional booking buttons
+  $('.book-professional-btn').click(function() {
+    var professional = $(this).data('professional');
+    var service = $(this).data('service');
+    $('#professional').val(professional);
+    $('#service').val(service);
+    $('html, body').animate({
+      scrollTop: $('#booking').offset().top - 100
+    }, 500);
+  });
+
+  // Form validation
+  $('#bookingForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    // Basic form validation
+    var isValid = true;
+    $(this).find('[required]').each(function() {
+      if (!$(this).val()) {
+        isValid = false;
+        $(this).addClass('is-invalid');
+      } else {
+        $(this).removeClass('is-invalid');
+      }
     });
-});
+    
+    if (isValid) {
+      // Submit form via AJAX
+      $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+          alert('Booking submitted successfully! We will contact you shortly.');
+          $('#bookingForm')[0].reset();
+        },
+        error: function() {
+          alert('An error occurred. Please try again later.');
+        }
+      });
+    }
+  });
 </script>
-
 <style>
 /* Event Card Styles */
 .venue-card {

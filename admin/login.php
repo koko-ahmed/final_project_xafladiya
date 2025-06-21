@@ -1,4 +1,4 @@
-<?php
+<?php // Admin login file
 require_once __DIR__ . '/../config/session_config.php';
 ?>
 <!DOCTYPE html>

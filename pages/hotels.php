@@ -21,49 +21,6 @@ include '../includes/header.php';
     </div>
 </section>
 
-<!-- Search & Filter Section -->
-<section class="search-section py-4 bg-light">
-    <div class="container">
-        <div class="search-wrapper">
-            <div class="row g-3">
-                <div class="col-lg-3 col-md-6">
-                    <select class="form-select" id="eventType">
-                        <option value="">Event Type</option>
-                        <option value="wedding">Wedding</option>
-                        <option value="conference">Conference</option>
-                        <option value="party">Party</option>
-                        <option value="corporate">Corporate Event</option>
-                        <option value="exhibition">Exhibition</option>
-                    </select>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <select class="form-select" id="location">
-                        <option value="">Location</option>
-                        <option value="mogadishu">Mogadishu</option>
-                        <option value="hargeisa">Hargeisa</option>
-                        <option value="bosaso">Bosaso</option>
-                        <option value="kismayo">Kismayo</option>
-                    </select>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <select class="form-select" id="capacity">
-                        <option value="">Capacity</option>
-                        <option value="1-100">Up to 100 guests</option>
-                        <option value="101-300">101-300 guests</option>
-                        <option value="301-500">301-500 guests</option>
-                        <option value="501+">500+ guests</option>
-                    </select>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <button class="btn btn-primary w-100 search-btn">
-                        <i class="fas fa-search me-2"></i>Search Venues
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- Venues Section -->
 <section id="venues" style="padding: 50px 0; background: linear-gradient(135deg, #4a90e2 0%, #2c3e50 100%); margin-top: 30px; margin-bottom: 30px;">
     <div style="max-width: 1200px; margin: 0 auto; padding: 0 15px;">
@@ -476,54 +433,73 @@ include '../includes/header.php';
         </div>
     </div>
 </script>
+<?php include '../includes/footer.php'; ?>
 
-<?php include '../includes/footer.php'; ?> 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- AOS Animation Library -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <!-- Custom JS -->
 <script src="<?php echo get_url('assets/js/main.js'); ?>"></script>
 
 <script>
-    // Initialize AOS animation library
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: true
-    });
+  // Initialize AOS
+  AOS.init({
+    duration: 1000,
+    once: true
+  });
 
-    // Handle contact form submission
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Add your form submission logic here
-        alert('Thank you for your message! We will get back to you soon.');
-        this.reset();
-    });
+  // Handle service booking buttons
+  $('.book-btn').click(function() {
+    var service = $(this).data('service');
+    $('#service').val(service);
+    $('html, body').animate({
+      scrollTop: $('#booking').offset().top - 100
+    }, 500);
+  });
 
-    // Handle newsletter form submission
-    document.getElementById('newsletterForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        // Add your newsletter subscription logic here
-        alert('Thank you for subscribing to our newsletter!');
-        this.reset();
-    });
+  // Handle professional booking buttons
+  $('.book-professional-btn').click(function() {
+    var professional = $(this).data('professional');
+    var service = $(this).data('service');
+    $('#professional').val(professional);
+    $('#service').val(service);
+    $('html, body').animate({
+      scrollTop: $('#booking').offset().top - 100
+    }, 500);
+  });
 
-    const videos = document.querySelectorAll('.hero-bg-video');
-    let current = 0;
-    function showVideo(index) {
-        videos.forEach((vid, i) => {
-            vid.classList.toggle('active', i === index);
-            if (i === index) {
-                vid.currentTime = 0;
-                vid.play();
-            } else {
-                vid.pause();
-            }
-        });
+  // Form validation
+  $('#bookingForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    // Basic form validation
+    var isValid = true;
+    $(this).find('[required]').each(function() {
+      if (!$(this).val()) {
+        isValid = false;
+        $(this).addClass('is-invalid');
+      } else {
+        $(this).removeClass('is-invalid');
+      }
+    });
+    
+    if (isValid) {
+      // Submit form via AJAX
+      $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+          alert('Booking submitted successfully! We will contact you shortly.');
+          $('#bookingForm')[0].reset();
+        },
+        error: function() {
+          alert('An error occurred. Please try again later.');
+        }
+      });
     }
-    showVideo(0); // Should show the first video only
-
-    videoInterval = setInterval(nextVideo, 8000); // 8 seconds
+  });
 </script>
 
 <!-- Add hero.js before closing body tag -->
