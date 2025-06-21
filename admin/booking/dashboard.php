@@ -52,6 +52,51 @@ if ($result) {
 }
 ?>
 
+<style>
+.btn-fab {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3em;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+  border: none;
+  margin-right: 0.5em;
+  margin-bottom: 0.2em;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.btn-fab-confirm {
+  background: #43cea2;
+  color: #fff;
+}
+.btn-fab-confirm:hover {
+  background: #388e3c;
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(67,206,162,0.18);
+}
+.btn-fab-cancel {
+  background: #ffb300;
+  color: #fff;
+}
+.btn-fab-cancel:hover {
+  background: #ff8f00;
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(255,179,0,0.18);
+}
+.btn-fab-complete {
+  background: #42a5f5;
+  color: #fff;
+}
+.btn-fab-complete:hover {
+  background: #1565c0;
+  color: #fff;
+  box-shadow: 0 6px 24px rgba(66,165,245,0.18);
+}
+</style>
+
 <div class="container-fluid">
     <div class="row">
         <?php include __DIR__ . '/../../includes/sidebar.php'; ?>
@@ -81,7 +126,6 @@ if ($result) {
                             <th>Additional Details</th>
                             <th>Booking Date</th>
                             <th>Status</th>
-                            <th>Admin Message</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -115,57 +159,41 @@ if ($result) {
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <?php echo htmlspecialchars($booking['message'] ?? ''); ?>
-                                        <button class="btn btn-link p-0" style="color: #ffc107; font-weight: bold;">EDIT</button>
-                                        <!-- Modal for editing message -->
-                                        <div class="modal fade" id="messageModal<?php echo $booking['id']; ?>" tabindex="-1">
-                                          <div class="modal-dialog">
-                                            <form method="POST">
-                                              <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
-                                              <div class="modal-content">
-                                                <div class="modal-header">
-                                                  <h5 class="modal-title">Edit Message</h5>
-                                                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                  <textarea name="admin_message" class="form-control"><?php echo htmlspecialchars($booking['message'] ?? ''); ?></textarea>
-                                                </div>
-                                                <div class="modal-footer">
-                                                  <button type="submit" name="save_message" class="btn btn-primary">Save</button>
-                                                </div>
-                                              </div>
-                                            </form>
-                                          </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex flex-wrap gap-1">
+                                        <div class="d-flex flex-row align-items-center gap-2">
                                             <?php if ($status === 'pending'): ?>
                                                 <form method="POST" style="display:inline;">
                                                     <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
                                                     <input type="hidden" name="new_status" value="confirmed">
-                                                    <button type="submit" class="btn btn-sm btn-success mb-1">Confirm</button>
+                                                    <button type="submit" class="btn btn-fab btn-fab-confirm" title="Confirm" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
                                                 </form>
                                                 <form method="POST" style="display:inline;">
                                                     <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
                                                     <input type="hidden" name="new_status" value="cancelled">
-                                                    <button type="submit" class="btn btn-sm btn-danger mb-1">Cancel</button>
+                                                    <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                        <i class="fas fa-ban"></i>
+                                                    </button>
                                                 </form>
                                             <?php elseif ($status === 'confirmed'): ?>
                                                 <form method="POST" style="display:inline;">
                                                     <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
                                                     <input type="hidden" name="new_status" value="completed">
-                                                    <button type="submit" class="btn btn-sm btn-primary mb-1">Complete</button>
+                                                    <button type="submit" class="btn btn-fab btn-fab-complete" title="Complete" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                        <i class="fas fa-flag-checkered"></i>
+                                                    </button>
                                                 </form>
                                                 <form method="POST" style="display:inline;">
                                                     <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
                                                     <input type="hidden" name="new_status" value="cancelled">
-                                                    <button type="submit" class="btn btn-sm btn-danger mb-1">Cancel</button>
+                                                    <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                        <i class="fas fa-ban"></i>
+                                                    </button>
                                                 </form>
                                             <?php elseif ($status === 'completed'): ?>
                                                 <span class="text-success">Done</span>
                                             <?php elseif ($status === 'cancelled'): ?>
-                                                <span class="text-danger">Cancelled</span>
+                                                <span class="text-warning">Cancelled</span>
                                             <?php endif; ?>
                                         </div>
                                     </td>
@@ -178,4 +206,14 @@ if ($result) {
         </main>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  tooltipTriggerList.forEach(function(el) {
+    new bootstrap.Tooltip(el);
+  });
+});
+</script>
+
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?> 

@@ -23,3 +23,27 @@ POST: Array
     [message] => n
 )
 
+Handler called at 2025-06-21 17:55:29
+POST: Array
+(
+    [name] => naima aadam
+    [email] => helad64555@mongrec.com
+    [phone] => 907569914
+    [service] => photography
+    [professional] => 8
+    [date] => 2025-06-20
+    [message] => ssf
+)
+
+Handler called at 2025-06-21 18:01:44
+POST: Array
+(
+    [name] => asia
+    [email] => k54579223@gmail.com
+    [phone] => 907569914
+    [service] => photography
+    [professional] => 8
+    [date] => 2025-07-03
+    [message] => hh
+)
+
