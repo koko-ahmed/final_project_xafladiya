@@ -9,7 +9,13 @@ $message_type = '';
 
 // Fetch events from the database
 $events = [];
-$query = "SELECT * FROM events ORDER BY event_date DESC";
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$query = "SELECT * FROM events";
+if ($search !== '') {
+    $search_escaped = mysqli_real_escape_string($db, $search);
+    $query .= " WHERE title LIKE '%$search_escaped%' OR type LIKE '%$search_escaped%' OR location LIKE '%$search_escaped%' OR status LIKE '%$search_escaped%'";
+}
+$query .= " ORDER BY event_date DESC";
 $result = mysqli_query($db, $query);
 
 if ($result) {
@@ -23,7 +29,7 @@ if ($result) {
 }
 ?>
 
-<?php include __DIR__ . '/../../includes/header.php'; ?>
+<?php include __DIR__ . '/../../includes/admin_header.php'; ?>
 
 <div class="container-fluid">
     <div class="row">
@@ -36,6 +42,17 @@ if ($result) {
                     <i class="fas fa-plus"></i> Add New Event
                 </a>
             </div>
+
+            <!-- Search Form -->
+            <form method="get" class="mb-3" style="max-width: 400px;">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search events..." value="<?php echo htmlspecialchars($search); ?>">
+                    <button class="btn btn-success" type="submit">Search</button>
+                    <?php if ($search !== ''): ?>
+                        <a href="dashboard.php" class="btn btn-danger">Reset</a>
+                    <?php endif; ?>
+                </div>
+            </form>
 
             <?php if(isset($_SESSION['message'])): ?>
                 <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert">
@@ -78,7 +95,7 @@ if ($result) {
                                         </span>
                                     </td>
                                     <td>
-                                        <a href="edit_event.php?id=<?php echo $event['id']; ?>" class="btn btn-sm btn-primary me-2">
+                                        <a href="edit_event.php?id=<?php echo $event['id']; ?>" class="btn btn-sm btn-success me-2">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <button type="button" class="btn btn-sm btn-danger" 

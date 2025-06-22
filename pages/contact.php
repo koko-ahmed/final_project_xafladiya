@@ -164,7 +164,7 @@ include '../includes/header.php';
                 <button
                   type="submit"
                   id="submitContactForm"
-                  class="btn btn-primary px-4 py-2"
+                  class="btn btn-send-message px-4 py-2"
                 >
                   Send Message
                 </button>

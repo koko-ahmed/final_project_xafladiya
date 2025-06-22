@@ -20,7 +20,15 @@ $res = mysqli_query($db, "SELECT COUNT(*) as total FROM photographers");
 if ($res && $row = mysqli_fetch_assoc($res)) $photographer_count = (int)$row['total'];
 // Total bookings
 $res = mysqli_query($db, "SELECT COUNT(*) as total FROM bookings");
-if ($res && $row = mysqli_fetch_assoc($res)) $booking_count = (int)$row['total'];
+$booking_count = 0;
+if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'];
+// Add photographer bookings
+$res = mysqli_query($db, "SELECT COUNT(*) as total FROM photographer_bookings");
+if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'];
+// Total users
+$res = mysqli_query($db, "SELECT COUNT(*) as total FROM users");
+$user_count = 0;
+if ($res && $row = mysqli_fetch_assoc($res)) $user_count = (int)$row['total'];
 
 // Events per hour
 $res = mysqli_query($db, "SELECT HOUR(event_time) as hour, COUNT(*) as count FROM events WHERE event_time IS NOT NULL GROUP BY hour");
@@ -39,7 +47,7 @@ if ($res) {
 }
 ?>
 
-<?php include __DIR__ . '/../includes/header.php'; ?>
+<?php include __DIR__ . '/../includes/admin_header.php'; ?>
 
 <div class="container-fluid">
     <div class="row">
@@ -83,6 +91,14 @@ if ($res) {
                         <div class="card-body">
                             <h5 class="card-title">Bookings</h5>
                             <p class="card-text display-6 fw-bold"><?php echo $booking_count; ?></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card text-white" style="background: #7c3aed; box-shadow: 0 4px 16px rgba(124,58,237,0.13);">
+                        <div class="card-body">
+                            <h5 class="card-title">Users</h5>
+                            <p class="card-text display-6 fw-bold"><?php echo $user_count; ?></p>
                         </div>
                     </div>
                 </div>

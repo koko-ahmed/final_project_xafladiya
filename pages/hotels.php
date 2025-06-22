@@ -127,7 +127,7 @@ include '../includes/header.php';
                                         <?php endif; ?>
                                         <?php endforeach; ?>
                                     </div>
-                                <button class="btn btn-primary w-100 mt-3 book-venue-btn" data-venue-id="<?php echo $venue['id']; ?>">
+                                <button class="btn btn-book-now w-100 mt-3 book-venue-btn" data-venue-id="<?php echo $venue['id']; ?>">
                                     Book Now
                                 </button>
                             </div>

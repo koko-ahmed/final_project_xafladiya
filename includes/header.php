@@ -99,10 +99,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_message'], $_POS
                         </li>
                     <?php else: ?>
                         <li class="nav-item ms-3">
-                            <a class="nav-link btn btn-outline-primary px-3" href="<?php echo get_url('pages/login.php'); ?>">Login</a>
+                            <a class="nav-link btn btn-login px-3" href="<?php echo get_url('pages/login.php'); ?>">Login</a>
                         </li>
                         <li class="nav-item ms-2">
-                            <a class="nav-link btn btn-primary px-3" href="<?php echo get_url('pages/register.php'); ?>">Register</a>
+                            <a class="nav-link btn btn-register px-3" href="<?php echo get_url('pages/register.php'); ?>">Register</a>
                         </li>
                     <?php endif; ?>
                 </ul>
