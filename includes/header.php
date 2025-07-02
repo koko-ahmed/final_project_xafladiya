@@ -86,6 +86,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_message'], $_POS
                         <a class="nav-link custom-navbar-link<?php if ($current_page === 'contact') echo ' active'; ?>" href="<?php echo get_url('pages/contact.php'); ?>">Contact</a>
                     </li>
                     <?php if(isset($_SESSION['user_id'])): ?>
+                        <li class="nav-item ms-3">
+                            <!-- Cart Icon with Badge -->
+                            <a class="nav-link position-relative" href="#" id="cartIcon" data-bs-toggle="modal" data-bs-target="#cartModal">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cart-count-badge" style="font-size:0.7rem;">
+                                    <?php echo isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0; ?>
+                                </span>
+                            </a>
+                        </li>
                         <li class="nav-item dropdown ms-3">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user-circle me-1"></i><?php echo htmlspecialchars($_SESSION['username'] ?? $_SESSION['email']); ?>
@@ -196,5 +205,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_message'], $_POS
         });
     });
     </script>
+
+    <!-- Cart Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cartModalLabel">My Cart</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="cart-modal-body">
+            <!-- Cart items will be loaded here dynamically -->
+          </div>
+          <div class="modal-footer">
+            <a href="<?php echo get_url('pages/mybookings.php'); ?>" class="btn btn-outline-primary">View Full Cart</a>
+            <button type="button" class="btn btn-success" id="proceed-to-confirmation">Proceed to Confirmation</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </body>
 </html>

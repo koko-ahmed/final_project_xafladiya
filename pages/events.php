@@ -311,6 +311,17 @@ include '../includes/header.php';
       });
     }
   });
+
+  // Add Bootstrap 5 vanilla JS code:
+  document.querySelectorAll('.book-event-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var eventId = this.getAttribute('data-event-id');
+      var eventIdInput = document.getElementById('eventId');
+      if (eventIdInput) eventIdInput.value = eventId;
+      var modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+      modal.show();
+    });
+  });
 </script>
 <style>
 /* Event Card Styles */

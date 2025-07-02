@@ -1,89 +1,69 @@
-<?php include '../includes/header.php'; ?>
-
 <?php
-if (!isset($_SESSION['email'])) {
-    echo '<div class="container mt-5"><div class="alert alert-warning">You must be logged in to view your bookings.</div></div>';
-    include '../includes/footer.php';
-    exit;
-}
-
-$user_email = $_SESSION['email'];
-include '../includes/db.php';
-
-$bookings = [];
-$error = '';
-
-// Fetch general bookings
-$query1 = "SELECT 'Venue/Event' AS booking_type, service_type, preferred_professional, preferred_date, additional_details, created_at, NULL as status FROM bookings WHERE email = ? ORDER BY created_at DESC";
-$stmt1 = mysqli_prepare($db, $query1);
-if ($stmt1) {
-    mysqli_stmt_bind_param($stmt1, 's', $user_email);
-    mysqli_stmt_execute($stmt1);
-    $result1 = mysqli_stmt_get_result($stmt1);
-    while ($row = mysqli_fetch_assoc($result1)) {
-        $bookings[] = $row;
-    }
-    mysqli_stmt_close($stmt1);
-} else {
-    $error .= '<div class="alert alert-danger">Could not fetch general bookings. Table may not exist or query failed.<br>Error: ' . htmlspecialchars(mysqli_error($db)) . '</div>';
-}
-
-// Fetch photographer bookings
-$query2 = "SELECT 'Cameraman' AS booking_type, service_type, professional_id, preferred_date, additional_details, booking_date as created_at, status FROM photographer_bookings WHERE user_email = ? ORDER BY booking_date DESC";
-$stmt2 = mysqli_prepare($db, $query2);
-if ($stmt2) {
-    mysqli_stmt_bind_param($stmt2, 's', $user_email);
-    mysqli_stmt_execute($stmt2);
-    $result2 = mysqli_stmt_get_result($stmt2);
-    while ($row = mysqli_fetch_assoc($result2)) {
-        $bookings[] = $row;
-    }
-    mysqli_stmt_close($stmt2);
-} else {
-    $error .= '<div class="alert alert-danger">Could not fetch cameraman bookings. Table may not exist or query failed.<br>Error: ' . htmlspecialchars(mysqli_error($db)) . '</div>';
-}
-
-// Sort all bookings by date (descending)
-usort($bookings, function($a, $b) {
-    return strtotime($b['created_at']) - strtotime($a['created_at']);
-});
+session_start();
+include '../includes/header.php';
+$cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
+$total = 0;
 ?>
-
-<div class="container mt-5">
-    <h1>My Bookings</h1>
-    <?php echo $error; ?>
-    <?php if (empty($bookings) && !$error): ?>
-        <div class="alert alert-info">You have not made any bookings yet.</div>
-    <?php elseif (!empty($bookings)): ?>
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Service/Details</th>
-                        <th>Preferred Professional</th>
-                        <th>Preferred Date</th>
-                        <th>Additional Details</th>
-                        <th>Date Booked</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($bookings as $booking): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($booking['booking_type']); ?></td>
-                            <td><?php echo htmlspecialchars($booking['service_type']); ?></td>
-                            <td><?php echo isset($booking['preferred_professional']) ? htmlspecialchars($booking['preferred_professional']) : (isset($booking['professional_id']) ? htmlspecialchars($booking['professional_id']) : ''); ?></td>
-                            <td><?php echo htmlspecialchars($booking['preferred_date']); ?></td>
-                            <td><?php echo htmlspecialchars($booking['additional_details']); ?></td>
-                            <td><?php echo htmlspecialchars($booking['created_at']); ?></td>
-                            <td><?php echo isset($booking['status']) ? htmlspecialchars($booking['status']) : 'N/A'; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    <?php endif; ?>
+<div class="container py-5">
+  <h2 class="mb-4">My Cart</h2>
+  <?php if (empty($cart)): ?>
+    <div class="alert alert-info">Your cart is empty.</div>
+  <?php else: ?>
+    <ul class="list-group mb-4">
+      <?php foreach ($cart as $key => $item): ?>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong><?php echo htmlspecialchars($item['type']); ?>:</strong> <?php echo htmlspecialchars($item['name']); ?>
+            <?php if (!empty($item['date'])): ?>
+              <span class="text-muted">(<?php echo htmlspecialchars($item['date']); ?>)</span>
+            <?php endif; ?>
+            <?php if (isset($item['price']) && $item['price'] !== ''): ?>
+              <div class="small text-success">$<?php echo htmlspecialchars($item['price']); ?>
+                <?php if (!empty($item['price_type'])): ?>
+                  <span class="text-muted">(<?php echo htmlspecialchars($item['price_type']); ?>)</span>
+                <?php endif; ?>
+              </div>
+              <?php $total += floatval($item['price']); ?>
+            <?php endif; ?>
+            <?php if (!empty($item['details'])): ?>
+              <div class="small text-muted"><?php echo htmlspecialchars($item['details']); ?></div>
+            <?php endif; ?>
+          </div>
+          <button class="btn btn-sm btn-danger remove-cart-item" data-key="<?php echo htmlspecialchars($key); ?>"><i class="fas fa-trash"></i></button>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <div class="mb-4 text-end fw-bold">Total: $<?php echo number_format($total, 2); ?></div>
+    <button class="btn btn-success" id="confirm-all-bookings">Confirm All Bookings</button>
+  <?php endif; ?>
 </div>
+<script>
+document.querySelectorAll('.remove-cart-item').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const itemKey = this.dataset.key;
+    fetch('../includes/remove_cart_item.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'key=' + encodeURIComponent(itemKey)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      }
+    });
+  });
+});
 
+document.getElementById('confirm-all-bookings')?.addEventListener('click', function () {
+  fetch('../includes/confirm_cart.php', { method: 'POST' })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Bookings confirmed!');
+        location.reload();
+      }
+    });
+});
+</script>
 <?php include '../includes/footer.php'; ?> 

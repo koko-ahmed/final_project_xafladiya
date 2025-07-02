@@ -4,9 +4,19 @@ $page_title = $site_name . ' - Professional Cameraman Services';
 include '../includes/header.php';
 require_once '../includes/db.php'; // Include the database connection
 
+$search = '';
+if (isset($_GET['search'])) {
+    $search = trim($_GET['search']);
+}
+
 // Fetch photographers from the database
 $photographers = [];
-$query = "SELECT id, name, specialty, contact_email, contact_phone, bio, image, location, years_experience, rating FROM photographers ORDER BY name";
+$query = "SELECT id, name, specialty, contact_email, contact_phone, bio, image, location, years_experience, rating, price, price_type FROM photographers";
+if ($search !== '') {
+    $search_escaped = mysqli_real_escape_string($db, $search);
+    $query .= " WHERE name LIKE '%$search_escaped%' OR contact_email LIKE '%$search_escaped%' OR contact_phone LIKE '%$search_escaped%' OR specialty LIKE '%$search_escaped%' OR location LIKE '%$search_escaped%'";
+}
+$query .= " ORDER BY name ASC";
 $result = mysqli_query($db, $query);
 
 if ($result) {
@@ -180,6 +190,14 @@ if ($result) {
                       <span>(<?php echo htmlspecialchars(number_format($rating, 1)); ?>/5)</span>
                   </div>
                 <?php endif; ?>
+                <?php if (isset($photographer['price']) && $photographer['price'] !== null && $photographer['price'] !== ''): ?>
+                  <div class="professional-price mb-2">
+                    <strong>Price:</strong> $<?php echo htmlspecialchars($photographer['price']); ?>
+                    <?php if (!empty($photographer['price_type'])): ?>
+                      <span class="text-muted small">(<?php echo htmlspecialchars($photographer['price_type']); ?>)</span>
+                    <?php endif; ?>
+                  </div>
+                <?php endif; ?>
                 <a href="#booking" class="btn btn-outline-primary w-100 mt-3 book-professional-btn" data-professional="<?php echo htmlspecialchars($photographer['name']); ?>">
                   Book <?php echo htmlspecialchars($photographer['name']); ?>
                 </a>
@@ -239,11 +257,13 @@ if ($result) {
                     <label for="professional" class="form-label">Preferred Professional</label>
                     <select class="form-select" id="professional" name="professional">
                       <option value="">Select a professional</option>
-                      <?php foreach (
-                        $photographers as $photographer): ?>
-                        <option value="<?php echo $photographer['id']; ?>"><?php echo htmlspecialchars($photographer['name']); ?></option>
+                      <?php foreach ($photographers as $photographer): ?>
+                        <option value="<?php echo $photographer['id']; ?>" data-price="<?php echo isset($photographer['price']) ? htmlspecialchars($photographer['price']) : ''; ?>" data-price-type="<?php echo isset($photographer['price_type']) ? htmlspecialchars($photographer['price_type']) : ''; ?>">
+                          <?php echo htmlspecialchars($photographer['name']); ?>
+                        </option>
                       <?php endforeach; ?>
                     </select>
+                    <div id="professional-price-info" class="mt-2 text-primary fw-bold" style="min-height:1.5em;"></div>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -274,6 +294,8 @@ if ($result) {
 
 <!-- Bootstrap JS Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery (required for AJAX and handlers) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- AOS Animation Library -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <!-- Custom JS -->
@@ -306,33 +328,21 @@ if ($result) {
     }, 500);
   });
 
-  // Form validation
-  $('#bookingForm').on('submit', function(e) {
-    e.preventDefault();
-    
-    // Basic form validation
-    var isValid = true;
-    $(this).find('[required]').each(function() {
-      if (!$(this).val()) {
-        isValid = false;
-        $(this).addClass('is-invalid');
-      } else {
-        $(this).removeClass('is-invalid');
-      }
-    });
-    
-    if (isValid) {
-      // Submit form via AJAX
-      $.ajax({
-        url: $(this).attr('action'),
-        type: 'POST',
-        data: $(this).serialize(),
-        success: function(response) {
-          alert('Booking submitted successfully! We will contact you shortly.');
-          $('#bookingForm')[0].reset();
-        },
-        error: function() {
-          alert('An error occurred. Please try again later.');
+  // Show price for selected professional
+  document.addEventListener('DOMContentLoaded', function() {
+    const professionalSelect = document.getElementById('professional');
+    const priceInfo = document.getElementById('professional-price-info');
+    if (professionalSelect && priceInfo) {
+      professionalSelect.addEventListener('change', function() {
+        const selected = this.options[this.selectedIndex];
+        const price = selected.getAttribute('data-price');
+        const priceType = selected.getAttribute('data-price-type');
+        if (price && priceType) {
+          priceInfo.textContent = `Price: $${price} (${priceType})`;
+        } else if (price) {
+          priceInfo.textContent = `Price: $${price}`;
+        } else {
+          priceInfo.textContent = '';
         }
       });
     }

@@ -14,7 +14,7 @@ require_once __DIR__ . '/includes/db.php';
 <?php
 // Fetch photographers from the database
 $photographers = [];
-$query = "SELECT id, name, specialty, contact_email, contact_phone, bio, image, location, years_experience, rating FROM photographers ORDER BY name";
+$query = "SELECT id, name, specialty, contact_email, contact_phone, bio, image, location, years_experience, rating, price, price_type FROM photographers ORDER BY name";
 $result = mysqli_query($db, $query);
 
 if ($result) {
@@ -78,6 +78,13 @@ if ($result) {
                             <?php endif; ?>
                             <?php if (!empty($photographer['bio'])): ?>
                                 <p class="card-text"><?php echo nl2br(htmlspecialchars($photographer['bio'])); ?></p>
+                            <?php endif; ?>
+                            <?php if (isset($photographer['price']) && $photographer['price'] !== null && $photographer['price'] !== ''): ?>
+                                <p class="card-text mb-2"><strong>Price:</strong> $<?php echo htmlspecialchars($photographer['price']); ?>
+                                    <?php if (!empty($photographer['price_type'])): ?>
+                                        <span class="text-muted small">(<?php echo htmlspecialchars($photographer['price_type']); ?>)</span>
+                                    <?php endif; ?>
+                                </p>
                             <?php endif; ?>
                             <div class="mt-3">
                                 <a href="mailto:<?php echo htmlspecialchars($photographer['contact_email']); ?>" 

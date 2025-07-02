@@ -42,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $location = trim($_POST['location'] ?? '');
     $years_experience = filter_var($_POST['years_experience'] ?? '', FILTER_VALIDATE_INT);
     $rating = filter_var($_POST['rating'] ?? '', FILTER_VALIDATE_FLOAT);
+    $price = trim($_POST['price'] ?? '');
+    $price_type = trim($_POST['price_type'] ?? '');
 
     if (empty($name)) {
         $_SESSION['message'] = 'Photographer name is mandatory.';
@@ -115,19 +117,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              location = ?,
              years_experience = ?,
              rating = ?,
-             image = ?
+             image = ?,
+             price = ?,
+             price_type = ?
              WHERE id = ?";
 
     $stmt = mysqli_prepare($db, $query);
-    
+    if (!$stmt) {
+        die('SQL Prepare Error: ' . mysqli_error($db));
+    }
     // Determine image_path binding value
     $image_bind_value = $image_path;
     if (empty($image_path)) {
         $image_bind_value = NULL;
     }
-
     // Bind parameters with correct types
-    mysqli_stmt_bind_param($stmt, 'ssssssidsi',
+    mysqli_stmt_bind_param($stmt, 'ssssssidsdsi',
         $name,
         $specialty,
         $contactEmail,
@@ -137,6 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $years_experience,
         $rating,
         $image_bind_value,
+        $price,
+        $price_type,
         $id
     );
 
@@ -215,6 +222,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="rating" class="form-label">Rating (out of 5.0, e.g., 4.5)</label>
                     <input type="number" step="0.1" class="form-control" id="rating" name="rating" 
                            value="<?php echo htmlspecialchars($photographer['rating']); ?>" min="0" max="5">
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="number" step="0.01" class="form-control" id="price" name="price" value="<?php echo htmlspecialchars($photographer['price'] ?? ''); ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="price_type" class="form-label">Price Type</label>
+                    <select class="form-control" id="price_type" name="price_type" required>
+                        <option value="" disabled>Select type</option>
+                        <option value="per hour" <?php if(($photographer['price_type'] ?? '') == 'per hour') echo 'selected'; ?>>Per Hour</option>
+                        <option value="per event" <?php if(($photographer['price_type'] ?? '') == 'per event') echo 'selected'; ?>>Per Event</option>
+                        <option value="per day" <?php if(($photographer['price_type'] ?? '') == 'per day') echo 'selected'; ?>>Per Day</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="image" class="form-label">Photographer Image</label>

@@ -70,12 +70,17 @@ function initVenueBooking() {
         button.addEventListener('click', function() {
             const venueId = this.getAttribute('data-venue-id');
             const venueCard = this.closest('.venue-card');
-            const venueName = venueCard.querySelector('.venue-name').textContent;
-            const venuePrice = venueCard.querySelector('.venue-price').textContent;
-
+            let venueName = '';
+            let venuePrice = '';
+            if (venueCard) {
+                const venueNameElem = venueCard.querySelector('.venue-name');
+                venueName = venueNameElem ? venueNameElem.textContent : '';
+                const venuePriceElem = venueCard.querySelector('.venue-price');
+                venuePrice = venuePriceElem ? venuePriceElem.textContent : '';
+            }
             // Update modal with venue details
             document.getElementById('bookingModalLabel').textContent = `Book ${venueName}`;
-            
+            document.getElementById('venueId').value = venueId;
             // Show booking modal
             bookingModal.show();
         });
@@ -85,6 +90,7 @@ function initVenueBooking() {
     if (bookingForm) {
         bookingForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            return false;
             
             // Get payment method
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
@@ -102,16 +108,21 @@ function initVenueBooking() {
             try {
                 // Process payment
                 const paymentResult = await processPayment(paymentMethod.value);
-                
                 if (paymentResult.success) {
                     // Only show success modal after payment is confirmed
                     bookingModal.hide();
                     this.reset();
+                    // Refresh the cart (simulate click on cart icon if present)
+                    const cartIcon = document.getElementById('cartIcon');
+                    if (cartIcon) cartIcon.click();
                     setTimeout(() => {
                         successModal.show();
                     }, 500);
                 } else {
-                    throw new Error(paymentResult.error || 'Payment failed. Please try again.');
+                    // Remove or comment out the toast notification
+                    // showNotification(paymentResult.error || 'Invalid payment details. Please check and try again.', 'danger');
+                    // Optionally, show an alert instead:
+                    alert(paymentResult.error || 'Invalid payment details. Please check and try again.');
                 }
             } catch (error) {
                 alert(error.message);
@@ -120,6 +131,7 @@ function initVenueBooking() {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
             }
+            return false;
         });
     }
 }
@@ -146,24 +158,8 @@ async function processPayment(paymentMethod) {
 
 // Validate payment details based on payment method
 function validatePaymentDetails(paymentMethod) {
-    if (paymentMethod === 'card') {
-        const cardNumber = document.getElementById('cardNumber')?.value;
-        const cardHolder = document.getElementById('cardHolder')?.value;
-        const expiryDate = document.getElementById('expiryDate')?.value;
-        const cvv = document.getElementById('cvv')?.value;
-
-        return (
-            cardNumber?.match(/^[0-9]{16}$/) &&
-            cardHolder?.trim().length > 0 &&
-            expiryDate?.match(/^(0[1-9]|1[0-2])\/([0-9]{2})$/) &&
-            cvv?.match(/^[0-9]{3,4}$/)
-        );
-    } else if (paymentMethod === 'evc') {
-        const phoneNumber = document.getElementById('phoneNumber')?.value;
-        return phoneNumber?.match(/^[0-9]{10}$/);
-    }
-
-    return false;
+    // Bypass all detailed validation and always return true
+    return true;
 }
 
 /**
@@ -194,7 +190,7 @@ function initVenueSubmission() {
                 bootstrap.Modal.getInstance(document.getElementById('addVenueModal')).hide();
                 
                 // Show success message
-                showNotification('Venue submitted successfully!', 'success');
+                // showNotification('Venue submitted successfully!', 'success');
                 
                 // Reset form
                 this.reset();
@@ -232,7 +228,7 @@ function initSearch() {
                     card.style.opacity = '1';
                     card.style.transform = 'scale(1)';
                 });
-                showNotification('Search results updated', 'info');
+                // showNotification('Search results updated', 'info');
             }, 1000);
         });
     }
@@ -242,53 +238,7 @@ function initSearch() {
  * Initialize payment processing
  */
 function initPaymentProcessing() {
-    const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
-    
-    paymentMethods.forEach(method => {
-        method.addEventListener('change', function() {
-            const selectedMethod = this.value;
-            console.log(`Selected payment method: ${selectedMethod}`);
-            
-            // You can add specific logic for each payment method here
-            switch(selectedMethod) {
-                case 'evc':
-                    // Handle EVC Plus payment
-                    break;
-                case 'golis':
-                    // Handle Golis payment
-                    break;
-                case 'sahal':
-                    // Handle Sahal payment
-                    break;
-                case 'card':
-                    // Handle card payment
-                    break;
-            }
-        });
-    });
-}
-
-/**
- * Show notification message
- */
-function showNotification(message, type = 'success') {
-    // Create notification element
-    const notification = document.createElement('div');
-    notification.className = `alert alert-${type} notification-toast`;
-    notification.role = 'alert';
-    notification.textContent = message;
-    
-    // Add to document
-    document.body.appendChild(notification);
-    
-    // Trigger animation
-    setTimeout(() => notification.classList.add('show'), 100);
-    
-    // Remove after delay
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
+    // No phone number logic for Golis/EVC
 }
 
 // Add custom styles for notifications

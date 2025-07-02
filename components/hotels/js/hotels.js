@@ -405,6 +405,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Run this on initial load to tag hotels with data attributes
   tagHotelsForFiltering();
+
+  // Handle Book Now button in carousel to set hotel name in modal
+  const bookNowBtns = document.querySelectorAll('.book-now-btn');
+  const selectedHotelNameSpan = document.getElementById('selectedHotelName');
+  const hotelNameInput = document.getElementById('hotelNameInput');
+
+  bookNowBtns.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const hotelName = this.getAttribute('data-hotel-name') || '';
+      if (selectedHotelNameSpan) selectedHotelNameSpan.textContent = hotelName;
+      if (hotelNameInput) hotelNameInput.value = hotelName;
+      // Open the modal using Bootstrap 5 vanilla JS
+      var modal = new bootstrap.Modal(document.getElementById('hotelModal'));
+      modal.show();
+    });
+  });
 });
 
 // Hotels Component JavaScript
@@ -431,18 +448,53 @@ $(document).ready(function() {
   // Handle hotel booking form submission
   $('#hotel-booking-form').on('submit', function(e) {
     e.preventDefault();
-    
-    // Show success message and close modal
-    if (window.showAlert) {
-      window.showAlert('success', 'Your booking request has been received. We will contact you shortly to confirm your reservation.');
-    } else {
-      alert('Your booking request has been received. We will contact you shortly to confirm your reservation.');
-    }
-    
-    $('#hotelModal').modal('hide');
-    
-    // Reset form
-    $('#hotel-booking-form')[0].reset();
+    var form = $(this);
+    var formData = form.serialize();
+    var submitBtn = form.find('button[type="submit"]');
+    var originalText = submitBtn.html();
+    submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Processing...');
+
+    // Debug: log form data
+    console.log('Submitting booking form data:', formData);
+
+    $.ajax({
+      url: 'pages/process_venue_booking.php',
+      method: 'POST',
+      data: formData,
+      dataType: 'json',
+      success: function(response) {
+        // Debug: log server response
+        console.log('Server response:', response);
+        if (response.status === 'success') {
+          // Refresh the cart modal contents
+          $('#cart-modal-body').load('includes/fetch_cart.php');
+          // Hide any lingering alerts or toasts
+          $('.alert, .notification-toast').remove();
+          if (window.showAlert) {
+            window.showAlert('success', 'Your booking request has been received and added to your cart. We will contact you shortly to confirm your reservation.');
+          }
+          $('#hotelModal').modal('hide');
+          form[0].reset();
+        } else {
+          if (window.showAlert) {
+            window.showAlert('danger', response.message || 'Booking failed. Please try again.');
+          }
+          // Debug: show alert if not success
+          alert('Booking failed: ' + (response.message || 'Unknown error'));
+        }
+      },
+      error: function(xhr, status, error) {
+        if (window.showAlert) {
+          window.showAlert('danger', 'An error occurred. Please try again.');
+        }
+        // Debug: log AJAX error
+        console.error('AJAX error:', status, error);
+        alert('AJAX error: ' + error);
+      },
+      complete: function() {
+        submitBtn.prop('disabled', false).html(originalText);
+      }
+    });
   });
   
   // Featured hotels carousel enhancements

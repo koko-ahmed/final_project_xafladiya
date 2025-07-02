@@ -17,6 +17,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $date = mysqli_real_escape_string($db, $_POST['date']);
         $message = mysqli_real_escape_string($db, $_POST['message']); // Optional field
 
+        // Fetch price and price_type for the selected professional or hotel
+        $price = '';
+        $price_type = '';
+        if (!empty($professional)) {
+            if (in_array(strtolower($service), ['photography', 'videography', 'both'])) {
+                $prof_query = "SELECT price, price_type FROM photographers WHERE id = ?";
+            } else if (strtolower($service) === 'hotel' || strtolower($service) === 'hall' || strtolower($service) === 'venue') {
+                $prof_query = "SELECT price, price_type FROM hotels WHERE id = ?";
+            } else {
+                $prof_query = null;
+            }
+            if ($prof_query) {
+                $prof_stmt = mysqli_prepare($db, $prof_query);
+                if ($prof_stmt) {
+                    mysqli_stmt_bind_param($prof_stmt, "i", $professional);
+                    mysqli_stmt_execute($prof_stmt);
+                    mysqli_stmt_bind_result($prof_stmt, $price, $price_type);
+                    mysqli_stmt_fetch($prof_stmt);
+                    mysqli_stmt_close($prof_stmt);
+                }
+            }
+        }
+
         // If service is photography or videography, insert into photographer_bookings
         if (in_array(strtolower($service), ['photography', 'videography', 'both'])) {
             $query = "INSERT INTO photographer_bookings (user_name, user_email, user_phone, service_type, professional_id, preferred_date, additional_details, status, booking_date) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())";
@@ -29,7 +52,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     file_put_contents(__DIR__ . '/debug_booking.txt', "SQL Error: " . mysqli_error($db) . "\n", FILE_APPEND);
                 }
                 if($exec) {
-                    echo json_encode(['status' => 'success']);
+                    // Add to session cart
+                    session_start();
+                    if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
+                    $cart_item = [
+                        'type' => ucfirst($service),
+                        'name' => $professional ? $professional : $name,
+                        'date' => $date,
+                        'details' => $message,
+                        'price' => $price,
+                        'price_type' => $price_type
+                    ];
+                    $_SESSION['cart'][uniqid()] = $cart_item;
+                    header('Location: cameraman.php');
+                    exit;
                 } else {
                     echo json_encode(['status' => 'error', 'message' => 'Failed to save cameraman booking: ' . mysqli_error($db)]);
                 }
@@ -50,7 +86,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     file_put_contents(__DIR__ . '/debug_booking.txt', "SQL Error: " . mysqli_error($db) . "\n", FILE_APPEND);
                 }
                 if($exec) {
-                    echo json_encode(['status' => 'success']);
+                    // Add to session cart
+                    session_start();
+                    if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
+                    $cart_item = [
+                        'type' => ucfirst($service),
+                        'name' => $professional ? $professional : $name,
+                        'date' => $date,
+                        'details' => $message,
+                        'price' => $price,
+                        'price_type' => $price_type
+                    ];
+                    $_SESSION['cart'][uniqid()] = $cart_item;
+                    header('Location: cameraman.php');
+                    exit;
                 } else {
                     echo json_encode(['status' => 'error', 'message' => 'Failed to save booking: ' . mysqli_error($db)]);
                 }

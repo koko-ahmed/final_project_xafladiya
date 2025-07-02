@@ -3,7 +3,132 @@ require_once '../config/config.php';
 $page_title = $site_name . ' - Event Venues & Halls';
 $current_page = 'hotels';
 include '../includes/header.php';
+
+// Show success/error message after redirect
+if (isset($_GET['booking']) && $_GET['booking'] === 'success'): ?>
+  <div class="alert alert-success">Your booking has been received. We will contact you shortly.</div>
+<?php elseif (isset($_GET['booking']) && $_GET['booking'] === 'error'): ?>
+  <div class="alert alert-danger">There was an error saving your booking. Please try again.</div>
+<?php endif; ?>
+
+<?php
+// Show modal if ?book=1 is set
+if (isset($_GET['book'])):
+  $venue_id = isset($_GET['venue_id']) ? (int)$_GET['venue_id'] : '';
+  $venue_name = isset($_GET['venue_name']) ? htmlspecialchars($_GET['venue_name']) : '';
 ?>
+<!-- Modal Overlay -->
+<style>
+  .custom-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .custom-modal-content {
+    background: #fff;
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+    max-width: 480px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .custom-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 2rem;
+    color: #888;
+    text-decoration: none;
+    font-weight: bold;
+    z-index: 2;
+    transition: color 0.2s;
+  }
+  .custom-modal-close:hover {
+    color: #333;
+  }
+  .custom-modal-content h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+    color: #2d2d2d;
+  }
+  .custom-modal-content .form-label {
+    font-weight: 500;
+    color: #333;
+  }
+  .custom-modal-content .form-control, .custom-modal-content .form-select {
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  .custom-modal-content .btn-success {
+    border-radius: 8px;
+    font-size: 1.1rem;
+    padding: 0.75rem 0;
+    margin-top: 0.5rem;
+  }
+</style>
+<div class="custom-modal-overlay">
+  <div class="custom-modal-content">
+    <a href="hotels.php" class="custom-modal-close">&times;</a>
+    <h2>Book Your Stay</h2>
+    <form action="process_venue_booking.php" method="POST">
+      <input type="hidden" name="venue_id" value="<?php echo $venue_id; ?>">
+      <input type="hidden" name="venue_name" value="<?php echo $venue_name; ?>">
+      <div class="mb-3">
+        <label for="user_name" class="form-label">Full Name</label>
+        <input type="text" class="form-control" name="user_name" id="user_name" required>
+      </div>
+      <div class="mb-3">
+        <label for="user_email" class="form-label">Email</label>
+        <input type="email" class="form-control" name="user_email" id="user_email" required>
+      </div>
+      <div class="mb-3">
+        <label for="user_phone" class="form-label">Phone</label>
+        <input type="tel" class="form-control" name="user_phone" id="user_phone" required>
+      </div>
+      <div class="mb-3">
+        <label for="event_date" class="form-label">Event Date</label>
+        <input type="date" class="form-control" name="event_date" id="event_date" required>
+      </div>
+      <div class="mb-3">
+        <label for="guests" class="form-label">Number of Guests</label>
+        <input type="number" class="form-control" name="guests" id="guests" min="1" required>
+      </div>
+      <div class="mb-3">
+        <label for="duration_hours" class="form-label">Duration (Hours)</label>
+        <input type="number" class="form-control" name="duration_hours" id="duration_hours" min="1" required>
+      </div>
+      <div class="mb-3">
+        <label for="special_requirements" class="form-label">Special Requirements</label>
+        <textarea class="form-control" name="special_requirements" id="special_requirements" rows="2"></textarea>
+      </div>
+      <div class="mb-3">
+        <label for="payment_method" class="form-label">Payment Method</label>
+        <select class="form-select" name="payment_method" id="payment_method" required>
+          <option value="">Select a payment method</option>
+          <option value="card">Credit/Debit Card</option>
+          <option value="paypal">PayPal</option>
+          <option value="evc">EVC Plus</option>
+          <option value="golis">Golis</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-success w-100">Submit Booking</button>
+    </form>
+  </div>
+</div>
+<?php endif; ?>
 
 <!-- Custom CSS for venue page -->
 <link rel="stylesheet" href="<?php echo get_url('assets/css/venue-styles.css'); ?>">
@@ -127,9 +252,9 @@ include '../includes/header.php';
                                         <?php endif; ?>
                                         <?php endforeach; ?>
                                     </div>
-                                <button class="btn btn-book-now w-100 mt-3 book-venue-btn" data-venue-id="<?php echo $venue['id']; ?>">
+                                <a href="?book=1&venue_id=<?php echo $venue['id']; ?>&venue_name=<?php echo urlencode($venue['name']); ?>" class="btn btn-primary">
                                     Book Now
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -255,6 +380,7 @@ include '../includes/header.php';
             </div>
             <div class="modal-body p-4">
                 <form id="bookingForm" class="needs-validation" novalidate>
+                    <input type="hidden" id="venueId" name="professional">
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="form-floating">
@@ -348,6 +474,16 @@ include '../includes/header.php';
                                         <span>EVC Plus</span>
                                     </label>
                                     <div class="payment-details-container" id="evc-details"></div>
+                                </div>
+                                <div class="payment-option">
+                                    <input type="radio" class="btn-check" name="paymentMethod" id="golisPayment" value="golis" required>
+                                    <label class="payment-label" for="golisPayment">
+                                        <div class="payment-icons">
+                                            <img src="https://seeklogo.com/images/G/golis-telecom-logo-6B1B1B1B1B-seeklogo.com.png" alt="Golis" class="payment-icon" style="height:32px;">
+                                        </div>
+                                        <span>Golis</span>
+                                    </label>
+                                    <div class="payment-details-container" id="golis-details"></div>
                                 </div>
                             </div>
                         </div>
@@ -491,8 +627,8 @@ include '../includes/header.php';
         type: 'POST',
         data: $(this).serialize(),
         success: function(response) {
-          alert('Booking submitted successfully! We will contact you shortly.');
-          $('#bookingForm')[0].reset();
+          // Remove or comment out this line:
+          // alert('Booking submitted successfully! We will contact you shortly.');
         },
         error: function() {
           alert('An error occurred. Please try again later.');
@@ -501,9 +637,6 @@ include '../includes/header.php';
     }
   });
 </script>
-
-<!-- Add hero.js before closing body tag -->
-<script src="assets/js/hero.js"></script>
 
 <!-- Custom JS for venue page -->
 <script src="<?php echo get_url('assets/js/venue.js'); ?>"></script>

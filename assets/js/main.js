@@ -380,6 +380,7 @@ function handleFormSubmit(form, type) {
     console.log(`Form submission for ${type}`);
 
     // Default form processing can be added here
+    return false;
 }
 
 // Alert System
@@ -470,4 +471,43 @@ function initServiceBooking() {
             }
         });
     });
-} 
+}
+
+// === CART MODAL LOGIC ===
+document.addEventListener('DOMContentLoaded', function () {
+  const cartIcon = document.getElementById('cartIcon');
+  const cartModalBody = document.getElementById('cart-modal-body');
+
+  if (cartIcon && cartModalBody) {
+    cartIcon.addEventListener('click', function (e) {
+      // Fetch cart items via AJAX
+      fetch('/xafladia/includes/fetch_cart.php')
+        .then(response => response.text())
+        .then(html => {
+          cartModalBody.innerHTML = html;
+          attachRemoveCartHandlers();
+        });
+    });
+  }
+
+  function attachRemoveCartHandlers() {
+    document.querySelectorAll('.remove-cart-item').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const itemKey = this.dataset.key;
+        fetch('/xafladia/includes/remove_cart_item.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'key=' + encodeURIComponent(itemKey)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Refresh cart modal and badge
+            cartIcon.click();
+            document.getElementById('cart-count-badge').textContent = data.count;
+          }
+        });
+      });
+    });
+  }
+}); 

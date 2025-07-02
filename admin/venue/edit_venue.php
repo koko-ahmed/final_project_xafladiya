@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $location = trim($_POST['location'] ?? '');
     $description = trim($_POST['description'] ?? '');
-    $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT) ?: null;
+    $price = trim($_POST['price'] ?? '');
     $capacity = filter_var($_POST['capacity'], FILTER_VALIDATE_INT) ?: null;
     $features = trim($_POST['features'] ?? '');
     $events = trim($_POST['events'] ?? '');
@@ -204,7 +204,7 @@ if(isset($_SESSION['message'])) {
                             </div>
                             <div class="mb-3">
                                 <label for="price" class="form-label">Price (e.g., 500.00)</label>
-                                <input type="number" step="0.01" class="form-control" id="price" name="price" value="<?php echo htmlspecialchars($venue['price'] ?? ''); ?>">
+                                <input type="text" class="form-control" id="price" name="price" value="<?php echo htmlspecialchars($venue['price'] ?? ''); ?>" placeholder="e.g., 500.00, $55 per hour, Negotiable">
                             </div>
                             <div class="mb-3">
                                 <label for="capacity" class="form-label">Capacity (Number of guests)</label>

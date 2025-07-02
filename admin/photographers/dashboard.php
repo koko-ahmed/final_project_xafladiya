@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../includes/db.php';
 // Fetch photographers from the database
 $photographers = [];
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-$query = "SELECT * FROM photographers";
+$query = "SELECT id, name, specialty, contact_email, contact_phone, bio, image, location, years_experience, rating, price, price_type FROM photographers";
 if ($search !== '') {
     $search_escaped = mysqli_real_escape_string($db, $search);
     $query .= " WHERE name LIKE '%$search_escaped%' OR contact_email LIKE '%$search_escaped%' OR contact_phone LIKE '%$search_escaped%' OR specialty LIKE '%$search_escaped%' OR location LIKE '%$search_escaped%'";
@@ -74,6 +74,7 @@ if ($result) {
                             <th>Location</th>
                             <th>Years Exp.</th>
                             <th>Rating</th>
+                            <th>Price</th>
                             <th>Image</th>
                             <th>Actions</th>
                         </tr>
@@ -94,6 +95,14 @@ if ($result) {
                                     <td><?php echo htmlspecialchars($photographer['location']); ?></td>
                                     <td><?php echo htmlspecialchars($photographer['years_experience']); ?></td>
                                     <td><?php echo htmlspecialchars($photographer['rating']); ?></td>
+                                    <td>
+                                        <?php
+                                            echo isset($photographer['price']) ? htmlspecialchars($photographer['price']) : '';
+                                            if (!empty($photographer['price_type'])) {
+                                                echo ' <span class="text-muted small">(' . htmlspecialchars($photographer['price_type']) . ')</span>';
+                                            }
+                                        ?>
+                                    </td>
                                     <td>
                                         <?php if (!empty($photographer['image'])): ?>
                                             <img src="<?php echo get_url($photographer['image']); ?>" alt="Photographer Image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
@@ -155,6 +164,15 @@ var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggl
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl);
 });
+
+document.getElementById('professional').addEventListener('change', function() {
+    const selected = this.options[this.selectedIndex];
+    const price = selected.getAttribute('data-price');
+    const priceType = selected.getAttribute('data-price-type');
+    document.getElementById('professional-price-info').textContent = price && priceType ? `Price: $${price} (${priceType})` : (price ? `Price: $${price}` : '');
+});
 </script>
+
+<div id="professional-price-info" class="mt-2 text-primary fw-bold"></div>
 
 <?php include __DIR__ . '/../../includes/footer.php'; ?> 

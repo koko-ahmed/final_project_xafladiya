@@ -20,6 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $years_experience = trim($_POST['years_experience'] ?? '');
     $rating = trim($_POST['rating'] ?? '');
     $image = $_FILES['image'] ?? null;
+    $price = trim($_POST['price'] ?? '');
+    $price_type = trim($_POST['price_type'] ?? '');
 
     if (empty($name)) {
         $message = 'Photographer name is mandatory.';
@@ -34,6 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $location = mysqli_real_escape_string($db, $location);
         $years_experience = mysqli_real_escape_string($db, $years_experience);
         $rating = mysqli_real_escape_string($db, $rating);
+        $price = mysqli_real_escape_string($db, $price);
+        $price_type = mysqli_real_escape_string($db, $price_type);
 
         // Handle image upload (similar logic as in venue dashboard)
         $image_path = null;
@@ -82,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         // Prepare and execute the INSERT query
-        $query = "INSERT INTO photographers (name, specialty, contact_email, contact_phone, bio, image, location, years_experience, rating) VALUES (";
+        $query = "INSERT INTO photographers (name, specialty, contact_email, contact_phone, bio, image, location, years_experience, rating, price, price_type) VALUES (";
         $query .= "'" . $name . "', ";
         $query .= "'" . $specialty . "', ";
         $query .= "'" . $contactEmail . "', ";
@@ -92,14 +96,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query .= ", ";
         $query .= "'" . $location . "', ";
         $query .= "'" . $years_experience . "', ";
-        $query .= "'" . $rating . "'";
+        $query .= "'" . $rating . "', ";
+        $query .= "'" . $price . "', ";
+        $query .= "'" . $price_type . "'";
         $query .= ")";
 
         if (mysqli_query($db, $query)) {
             $message = 'Photographer added successfully!';
             $message_type = 'success';
             // Clear form fields after successful submission
-            $name = $specialty = $contactEmail = $contactPhone = $bio = $location = $years_experience = $rating = '';
+            $name = $specialty = $contactEmail = $contactPhone = $bio = $location = $years_experience = $rating = $price = $price_type = '';
             // Redirect after a short delay to prevent resubmission on refresh
             echo '<script>setTimeout(function(){ window.location.href = "' . get_url('admin/photographers/dashboard.php') . '"; }, 2000);</script>';
         } else {
@@ -153,6 +159,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mb-3">
             <label for="rating" class="form-label">Rating (out of 5.0, e.g., 4.5)</label>
             <input type="number" step="0.1" class="form-control" id="rating" name="rating" value="<?php echo htmlspecialchars($rating ?? ''); ?>" min="0" max="5">
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" step="0.01" class="form-control" id="price" name="price" value="<?php echo htmlspecialchars($price ?? ''); ?>" required>
+        </div>
+        <div class="mb-3">
+            <label for="price_type" class="form-label">Price Type</label>
+            <select class="form-control" id="price_type" name="price_type" required>
+                <option value="" disabled selected>Select type</option>
+                <option value="per hour" <?php if(($price_type ?? '') == 'per hour') echo 'selected'; ?>>Per Hour</option>
+                <option value="per event" <?php if(($price_type ?? '') == 'per event') echo 'selected'; ?>>Per Event</option>
+                <option value="per day" <?php if(($price_type ?? '') == 'per day') echo 'selected'; ?>>Per Day</option>
+            </select>
         </div>
         <div class="mb-3">
             <label for="image" class="form-label">Photographer Image</label>

@@ -161,22 +161,6 @@ async function processPayment(paymentMethod) {
 
 // Validate payment details based on payment method
 function validatePaymentDetails(paymentMethod) {
-    if (paymentMethod === 'card') {
-        const cardNumber = document.getElementById('cardNumber')?.value;
-        const cardHolder = document.getElementById('cardHolder')?.value;
-        const expiryDate = document.getElementById('expiryDate')?.value;
-        const cvv = document.getElementById('cvv')?.value;
-
-        return (
-            cardNumber?.match(/^[0-9]{16}$/) &&
-            cardHolder?.trim().length > 0 &&
-            expiryDate?.match(/^(0[1-9]|1[0-2])\/([0-9]{2})$/) &&
-            cvv?.match(/^[0-9]{3,4}$/)
-        );
-    } else if (paymentMethod === 'evc') {
-        const phoneNumber = document.getElementById('phoneNumber')?.value;
-        return phoneNumber?.match(/^[0-9]{10}$/);
-    }
-
-    return false;
+    // Bypass all detailed validation and always return true
+    return true;
 } 

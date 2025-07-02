@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $location = trim($_POST['location'] ?? '');
     $description = trim($_POST['description'] ?? '');
-    $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT) ?: null;
+    $price = isset($_POST['price']) && $_POST['price'] !== '' ? floatval($_POST['price']) : null;
     $capacity = filter_var($_POST['capacity'], FILTER_VALIDATE_INT) ?: null;
     $features = trim($_POST['features'] ?? '');
     $events = trim($_POST['events'] ?? '');
