@@ -67,3 +67,10 @@ document.getElementById('confirm-all-bookings')?.addEventListener('click', funct
 });
 </script>
 <?php include '../includes/footer.php'; ?> 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS Animation Library -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script type="text/javascript" src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+<!-- Custom JS -->
+<script src="<?php echo get_url('assets/js/main.js'); ?>"></script>
+<link rel="stylesheet" href="<?php echo get_url('assets/css/contact-page.css'); ?>">

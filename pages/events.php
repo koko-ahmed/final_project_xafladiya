@@ -149,7 +149,8 @@ include '../includes/header.php';
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form id="bookingForm" class="needs-validation" novalidate>
+                <form id="bookingForm" action="process_event_booking.php" method="POST" class="needs-validation" novalidate>
+                    <input type="hidden" id="eventId" name="event_id" value="">
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="form-floating">
@@ -194,7 +195,7 @@ include '../includes/header.php';
                                 <i class="fas fa-credit-card me-2"></i>Select Payment Method
                             </h6>
                             <div class="payment-methods">
-                                <!-- Credit Cards -->
+                                <!-- Credit/Debit Card -->
                                 <div class="payment-option">
                                     <input type="radio" class="btn-check" name="paymentMethod" id="cardPayment" value="card" required>
                                     <label class="payment-label" for="cardPayment">
@@ -205,8 +206,8 @@ include '../includes/header.php';
                                         </div>
                                         <span>Credit/Debit Card</span>
                                     </label>
+                                    <div class="payment-details-container" id="card-details"></div>
                                 </div>
-
                                 <!-- PayPal -->
                                 <div class="payment-option">
                                     <input type="radio" class="btn-check" name="paymentMethod" id="paypalPayment" value="paypal" required>
@@ -217,8 +218,7 @@ include '../includes/header.php';
                                         <span>PayPal</span>
                                     </label>
                                 </div>
-
-                                <!-- Mobile Money -->
+                                <!-- EVC Plus -->
                                 <div class="payment-option">
                                     <input type="radio" class="btn-check" name="paymentMethod" id="evcPayment" value="evc" required>
                                     <label class="payment-label" for="evcPayment">
@@ -227,6 +227,18 @@ include '../includes/header.php';
                                         </div>
                                         <span>EVC Plus</span>
                                     </label>
+                                    <div class="payment-details-container" id="evc-details"></div>
+                                </div>
+                                <!-- Golis -->
+                                <div class="payment-option">
+                                    <input type="radio" class="btn-check" name="paymentMethod" id="golisPayment" value="golis" required>
+                                    <label class="payment-label" for="golisPayment">
+                                        <div class="payment-icons">
+                                            <img src="https://seeklogo.com/images/G/golis-telecom-logo-6B1B1B1B1B-seeklogo.com.png" alt="Golis" class="payment-icon" style="height:32px;">
+                                        </div>
+                                        <span>Golis</span>
+                                    </label>
+                                    <div class="payment-details-container" id="golis-details"></div>
                                 </div>
                             </div>
                         </div>
@@ -243,6 +255,87 @@ include '../includes/header.php';
         </div>
     </div>
 </div>
+
+<!-- Payment Details Templates -->
+<script type="text/template" id="cardPaymentTemplate">
+    <div class="payment-details card-details">
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="cardNumber" placeholder="Card Number" required pattern="[0-9]{16}">
+                    <label for="cardNumber"><i class="fas fa-credit-card me-2"></i>Card Number</label>
+                    <div class="invalid-feedback">Please enter a valid 16-digit card number</div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="cardHolder" placeholder="Card Holder Name" required>
+                    <label for="cardHolder"><i class="fas fa-user me-2"></i>Card Holder Name</label>
+                    <div class="invalid-feedback">Please enter the card holder name</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])\/([0-9]{2})">
+                    <label for="expiryDate"><i class="fas fa-calendar-alt me-2"></i>Expiry Date</label>
+                    <div class="invalid-feedback">Please enter a valid expiry date (MM/YY)</div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="cvv" placeholder="CVV" required pattern="[0-9]{3,4}">
+                    <label for="cvv"><i class="fas fa-lock me-2"></i>CVV</label>
+                    <div class="invalid-feedback">Please enter a valid CVV</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/template" id="mobilePaymentTemplate">
+    <div class="payment-details mobile-details">
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="form-floating">
+                    <input type="tel" class="form-control" id="phoneNumber" placeholder="Phone Number" required pattern="[0-9]{10}">
+                    <label for="phoneNumber"><i class="fas fa-phone me-2"></i>Phone Number</label>
+                    <div class="invalid-feedback">Please enter a valid phone number</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- Payment Method Interactivity Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cardTemplate = document.getElementById('cardPaymentTemplate').innerHTML;
+    const mobileTemplate = document.getElementById('mobilePaymentTemplate').innerHTML;
+    const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+    const detailsContainers = document.querySelectorAll('.payment-details-container');
+
+    function showPaymentDetails(methodId) {
+        detailsContainers.forEach(container => {
+            container.classList.remove('active');
+            container.innerHTML = '';
+        });
+
+        const container = document.getElementById(`${methodId}-details`);
+        if (container) {
+            if (methodId === 'card') {
+                container.innerHTML = cardTemplate;
+            } else if (['evc', 'golis', 'sahal'].includes(methodId)) {
+                container.innerHTML = mobileTemplate;
+            }
+            container.classList.add('active');
+        }
+    }
+
+    paymentMethods.forEach(method => {
+        method.addEventListener('change', function() {
+            showPaymentDetails(this.value);
+        });
+    });
+});
+</script>
 
 <?php include '../includes/footer.php'; ?>
 
@@ -278,38 +371,6 @@ include '../includes/header.php';
     $('html, body').animate({
       scrollTop: $('#booking').offset().top - 100
     }, 500);
-  });
-
-  // Form validation
-  $('#bookingForm').on('submit', function(e) {
-    e.preventDefault();
-    
-    // Basic form validation
-    var isValid = true;
-    $(this).find('[required]').each(function() {
-      if (!$(this).val()) {
-        isValid = false;
-        $(this).addClass('is-invalid');
-      } else {
-        $(this).removeClass('is-invalid');
-      }
-    });
-    
-    if (isValid) {
-      // Submit form via AJAX
-      $.ajax({
-        url: $(this).attr('action'),
-        type: 'POST',
-        data: $(this).serialize(),
-        success: function(response) {
-          alert('Booking submitted successfully! We will contact you shortly.');
-          $('#bookingForm')[0].reset();
-        },
-        error: function() {
-          alert('An error occurred. Please try again later.');
-        }
-      });
-    }
   });
 
   // Add Bootstrap 5 vanilla JS code:
@@ -414,7 +475,7 @@ include '../includes/header.php';
     padding: 1.5rem;
 }
 
-/* Payment Methods Styles */
+/* Payment Methods Styles (copied from hotels.php) */
 .payment-methods {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -467,6 +528,29 @@ include '../includes/header.php';
     transform: scale(1.1);
 }
 
+.payment-details {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    border-radius: 12px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.payment-details-container {
+    display: none;
+    margin-top: 1rem;
+}
+
+.payment-details-container.active {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
     .payment-methods {
@@ -475,6 +559,9 @@ include '../includes/header.php';
 
     .payment-icons {
         height: 32px;
+    }
+    .payment-details {
+        padding: 1rem;
     }
 }
 </style> 

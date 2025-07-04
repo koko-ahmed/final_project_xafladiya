@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/session_config.php';
 require_once __DIR__ . '/../../includes/admin_auth.php';
-require_once __DIR__ . '/../../includes/header.php';
+require_once __DIR__ . '/../../includes/admin_header.php';
 require_once __DIR__ . '/../../includes/db.php';
 
 $message = '';
@@ -117,70 +117,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 
-<div class="container mt-5">
-    <h1>Add New Photographer</h1>
+<div class="container-fluid">
+  <div class="row">
+    <?php require_once __DIR__ . '/../../includes/sidebar.php'; ?>
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-5">
+      <h1>Add New Photographer</h1>
 
-    <?php if ($message): ?>
-        <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
-            <?php echo $message; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
+        <?php if ($message): ?>
+            <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
+                <?php echo $message; ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
 
-    <form action="" method="POST" enctype="multipart/form-data">
-        <div class="mb-3">
-            <label for="name" class="form-label">Photographer Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($name ?? ''); ?>" required>
-        </div>
-        <div class="mb-3">
-            <label for="specialty" class="form-label">Specialty (e.g., Wedding, Events)</label>
-            <input type="text" class="form-control" id="specialty" name="specialty" value="<?php echo htmlspecialchars($specialty ?? ''); ?>">
-        </div>
-        <div class="mb-3">
-            <label for="contact_email" class="form-label">Contact Email</label>
-            <input type="email" class="form-control" id="contact_email" name="contact_email" value="<?php echo htmlspecialchars($contactEmail ?? ''); ?>">
-        </div>
-        <div class="mb-3">
-            <label for="contact_phone" class="form-label">Contact Phone</label>
-            <input type="text" class="form-control" id="contact_phone" name="contact_phone" value="<?php echo htmlspecialchars($contactPhone ?? ''); ?>">
-        </div>
-        <div class="mb-3">
-            <label for="bio" class="form-label">Bio</label>
-            <textarea class="form-control" id="bio" name="bio" rows="4"><?php echo htmlspecialchars($bio ?? ''); ?></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="location" class="form-label">Location (e.g., Mogadishu)</label>
-            <input type="text" class="form-control" id="location" name="location" value="<?php echo htmlspecialchars($location ?? ''); ?>">
-        </div>
-        <div class="mb-3">
-            <label for="years_experience" class="form-label">Years of Experience</label>
-            <input type="number" class="form-control" id="years_experience" name="years_experience" value="<?php echo htmlspecialchars($years_experience ?? ''); ?>" min="0">
-        </div>
-        <div class="mb-3">
-            <label for="rating" class="form-label">Rating (out of 5.0, e.g., 4.5)</label>
-            <input type="number" step="0.1" class="form-control" id="rating" name="rating" value="<?php echo htmlspecialchars($rating ?? ''); ?>" min="0" max="5">
-        </div>
-        <div class="mb-3">
-            <label for="price" class="form-label">Price</label>
-            <input type="number" step="0.01" class="form-control" id="price" name="price" value="<?php echo htmlspecialchars($price ?? ''); ?>" required>
-        </div>
-        <div class="mb-3">
-            <label for="price_type" class="form-label">Price Type</label>
-            <select class="form-control" id="price_type" name="price_type" required>
-                <option value="" disabled selected>Select type</option>
-                <option value="per hour" <?php if(($price_type ?? '') == 'per hour') echo 'selected'; ?>>Per Hour</option>
-                <option value="per event" <?php if(($price_type ?? '') == 'per event') echo 'selected'; ?>>Per Event</option>
-                <option value="per day" <?php if(($price_type ?? '') == 'per day') echo 'selected'; ?>>Per Day</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="image" class="form-label">Photographer Image</label>
-            <input type="file" class="form-control" id="image" name="image" accept="image/*">
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Add Photographer</button>
-        <a href="<?php echo get_url('admin/photographers/dashboard.php'); ?>" class="btn btn-secondary">Cancel</a>
-    </form>
+        <form action="" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="name" class="form-label">Photographer Name</label>
+                <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($name ?? ''); ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="specialty" class="form-label">Specialty (e.g., Wedding, Events)</label>
+                <input type="text" class="form-control" id="specialty" name="specialty" value="<?php echo htmlspecialchars($specialty ?? ''); ?>">
+            </div>
+            <div class="mb-3">
+                <label for="contact_email" class="form-label">Contact Email</label>
+                <input type="email" class="form-control" id="contact_email" name="contact_email" value="<?php echo htmlspecialchars($contactEmail ?? ''); ?>">
+            </div>
+            <div class="mb-3">
+                <label for="contact_phone" class="form-label">Contact Phone</label>
+                <input type="text" class="form-control" id="contact_phone" name="contact_phone" value="<?php echo htmlspecialchars($contactPhone ?? ''); ?>">
+            </div>
+            <div class="mb-3">
+                <label for="bio" class="form-label">Bio</label>
+                <textarea class="form-control" id="bio" name="bio" rows="4"><?php echo htmlspecialchars($bio ?? ''); ?></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="location" class="form-label">Location (e.g., Mogadishu)</label>
+                <input type="text" class="form-control" id="location" name="location" value="<?php echo htmlspecialchars($location ?? ''); ?>">
+            </div>
+            <div class="mb-3">
+                <label for="years_experience" class="form-label">Years of Experience</label>
+                <input type="number" class="form-control" id="years_experience" name="years_experience" value="<?php echo htmlspecialchars($years_experience ?? ''); ?>" min="0">
+            </div>
+            <div class="mb-3">
+                <label for="rating" class="form-label">Rating (out of 5.0, e.g., 4.5)</label>
+                <input type="number" step="0.1" class="form-control" id="rating" name="rating" value="<?php echo htmlspecialchars($rating ?? ''); ?>" min="0" max="5">
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Price</label>
+                <input type="number" step="0.01" class="form-control" id="price" name="price" value="<?php echo htmlspecialchars($price ?? ''); ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="price_type" class="form-label">Price Type</label>
+                <select class="form-control" id="price_type" name="price_type" required>
+                    <option value="" disabled selected>Select type</option>
+                    <option value="per hour" <?php if(($price_type ?? '') == 'per hour') echo 'selected'; ?>>Per Hour</option>
+                    <option value="per event" <?php if(($price_type ?? '') == 'per event') echo 'selected'; ?>>Per Event</option>
+                    <option value="per day" <?php if(($price_type ?? '') == 'per day') echo 'selected'; ?>>Per Day</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Photographer Image</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Add Photographer</button>
+            <a href="<?php echo get_url('admin/photographers/dashboard.php'); ?>" class="btn btn-secondary">Cancel</a>
+        </form>
+    </main>
+  </div>
 </div>
 
 <?php require_once __DIR__ . '/../../includes/footer.php'; ?> 

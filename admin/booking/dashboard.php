@@ -85,6 +85,20 @@ if (isset($_POST['delete_venue_booking'], $_POST['venue_booking_id'])) {
     }
 }
 
+// At the top, add PHP to handle event status update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_booking_id'], $_POST['event_new_status'])) {
+    $event_booking_id = (int)$_POST['event_booking_id'];
+    $event_new_status = mysqli_real_escape_string($db, $_POST['event_new_status']);
+    $update_query = "UPDATE bookings SET status = '$event_new_status' WHERE id = $event_booking_id";
+    if (mysqli_query($db, $update_query)) {
+        $message = 'Event booking status updated to ' . htmlspecialchars(ucfirst($event_new_status)) . '.';
+        $message_type = 'success';
+    } else {
+        $message = 'Error updating event booking status: ' . mysqli_error($db);
+        $message_type = 'danger';
+    }
+}
+
 // Fetch photographer bookings from the database
 $bookings = [];
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -131,7 +145,17 @@ if ($res2) {
 
 // Always fetch venue bookings and merge for ALL view
 $venue_bookings = [];
-$venue_query = "SELECT * FROM venue_bookings ORDER BY created_at DESC";
+$venue_query = "SELECT * FROM venue_bookings";
+if ($search !== '') {
+    $search_escaped = mysqli_real_escape_string($db, $search);
+    $venue_query .= " WHERE user_name LIKE '%$search_escaped%' ";
+    $venue_query .= " OR user_email LIKE '%$search_escaped%' ";
+    $venue_query .= " OR user_phone LIKE '%$search_escaped%' ";
+    $venue_query .= " OR venue_name LIKE '%$search_escaped%' ";
+    $venue_query .= " OR event_date LIKE '%$search_escaped%' ";
+    $venue_query .= " OR special_requirements LIKE '%$search_escaped%' ";
+}
+$venue_query .= " ORDER BY created_at DESC";
 $venue_res = mysqli_query($db, $venue_query);
 if ($venue_res) {
     while ($row = mysqli_fetch_assoc($venue_res)) {
@@ -154,6 +178,28 @@ if ($venue_res) {
     mysqli_free_result($venue_res);
 }
 
+// Fetch event bookings
+$event_bookings = [];
+$event_query = "SELECT b.id, b.event_id, e.title AS event_name, b.ticket_quantity, b.full_name, b.email, b.phone, b.payment_method, b.status, b.created_at FROM bookings b LEFT JOIN events e ON b.event_id = e.id WHERE b.event_id IS NOT NULL";
+if ($search !== '') {
+    $search_escaped = mysqli_real_escape_string($db, $search);
+    $event_query .= " AND (e.title LIKE '%$search_escaped%' ";
+    $event_query .= " OR b.full_name LIKE '%$search_escaped%' ";
+    $event_query .= " OR b.email LIKE '%$search_escaped%' ";
+    $event_query .= " OR b.phone LIKE '%$search_escaped%' ";
+    $event_query .= " OR b.payment_method LIKE '%$search_escaped%' ";
+    $event_query .= " OR b.created_at LIKE '%$search_escaped%' ";
+    $event_query .= " OR b.status LIKE '%$search_escaped%' )";
+}
+$event_query .= " ORDER BY b.created_at DESC";
+$event_res = mysqli_query($db, $event_query);
+if ($event_res) {
+    while ($row = mysqli_fetch_assoc($event_res)) {
+        $event_bookings[] = $row;
+    }
+    mysqli_free_result($event_res);
+}
+
 // Sort all bookings by booked_at (descending)
 usort($bookings, function($a, $b) {
     return strtotime($b['booked_at']) - strtotime($a['booked_at']);
@@ -164,6 +210,8 @@ if ($type_filter === 'photographer') {
     $bookings = array_filter($bookings, function($b) { return $b['booking_type'] === 'Photographer'; });
 } elseif ($type_filter === 'venue') {
     // $venue_bookings already set above
+} elseif ($type_filter === 'event') {
+    $bookings = array_filter($bookings, function($b) { return $b['booking_type'] === 'Venues' && $b['id'] !== null && $b['id'] !== ''; });
 }
 
 // Count general bookings
@@ -275,6 +323,24 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
 .btn-outline-primary:active {
   color: #fff !important;
 }
+.btn-group .btn.active, .btn-group .btn:active, .btn-group .btn:focus {
+    background: #7b2ff2 !important;
+    color: #fff !important;
+    border-color: #7b2ff2 !important;
+    box-shadow: none;
+}
+.btn-group .btn {
+    border: 2px solid #7b2ff2;
+    background: #fff;
+    color: #7b2ff2;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-group .btn:hover:not(.active) {
+    background: #f3eaff;
+    color: #7b2ff2;
+}
 </style>
 
 <div class="container-fluid">
@@ -283,7 +349,19 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-5">
             <?php include __DIR__ . '/../../includes/admin_header.php'; ?>
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                <h1 class="h2">Photographer Booking Management</h1>
+                <h1 class="h2">
+                    <?php
+                    if ($type_filter === 'venue') {
+                        echo 'Venue Booking Management';
+                    } elseif ($type_filter === 'event') {
+                        echo 'Event Booking Management';
+                    } elseif ($type_filter === 'photographer') {
+                        echo 'Photographer Booking Management';
+                    } else {
+                        echo 'All Bookings Management';
+                    }
+                    ?>
+                </h1>
             </div>
 
             <!-- Search Form -->
@@ -297,10 +375,11 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
                 </div>
             </form>
 
-            <div class="d-flex gap-2 mb-3">
-                <a href="dashboard.php?type=all<?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="btn btn-filter btn-filter-all btn-<?php echo $type_filter==='all'?'primary':'outline-primary'; ?>">All</a>
-                <a href="dashboard.php?type=photographer<?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="btn btn-filter btn-filter-cameraman btn-<?php echo $type_filter==='photographer'?'primary':'outline-primary'; ?>">Cameraman</a>
-                <a href="dashboard.php?type=venue<?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="btn btn-filter btn-filter-venue btn-<?php echo $type_filter==='venue'?'primary':'outline-primary'; ?>">Venues</a>
+            <div class="btn-group mb-3" role="group">
+                <a href="?type=all<?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="btn btn-outline-primary<?php if ($type_filter === 'all') echo ' active'; ?>">ALL</a>
+                <a href="?type=photographer<?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="btn btn-outline-primary<?php if ($type_filter === 'photographer') echo ' active'; ?>">CAMERAMAN</a>
+                <a href="?type=venue<?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="btn btn-outline-primary<?php if ($type_filter === 'venue') echo ' active'; ?>">VENUES</a>
+                <a href="?type=event<?php echo $search ? '&search=' . urlencode($search) : ''; ?>" class="btn btn-outline-primary<?php if ($type_filter === 'event') echo ' active'; ?>">EVENTS</a>
             </div>
 
             <?php if ($message): ?>
@@ -310,7 +389,8 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
                 </div>
             <?php endif; ?>
 
-            <?php if ($type_filter !== 'venue'): ?>
+            <?php if ($type_filter === 'all'): ?>
+                <!-- Photographer bookings table -->
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
@@ -348,7 +428,7 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
                                         <td>
                                             <?php 
                                             $status = strtolower($booking['status']);
-                                            if (in_array($booking['booking_type'], ['Photographer', 'Venue'])) {
+                                            if (isset($booking['booking_type']) && in_array($booking['booking_type'], ['Photographer', 'Venue'])) {
                                                 if ($status === 'pending') {
                                                     echo '<span class="badge bg-warning text-dark">Pending</span>';
                                                 } elseif ($status === 'confirmed') {
@@ -366,7 +446,7 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
                                             ?>
                                         </td>
                                         <td>
-                                            <?php if ($booking['booking_type'] === 'Photographer') {
+                                            <?php if (isset($booking['booking_type']) && $booking['booking_type'] === 'Photographer') {
                                                 $status = strtolower($booking['status']); ?>
                                                 <div class="d-flex flex-row align-items-center gap-2">
                                                     <?php if ($status === 'pending'): ?>
@@ -431,10 +511,9 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
                         </tbody>
                     </table>
                 </div>
-            <?php endif; ?>
-
-            <?php if ($type_filter === 'venue'): ?>
+                <!-- Venue bookings table -->
                 <div class="table-responsive">
+                    <h4 class="mt-4">Venue Bookings</h4>
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -444,10 +523,7 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
                                 <th>User Phone</th>
                                 <th>Venue Name</th>
                                 <th>Event Date</th>
-                                <th>Guests</th>
-                                <th>Duration (hrs)</th>
                                 <th>Special Requirements</th>
-                                <th>Payment Method</th>
                                 <th>Status</th>
                                 <th>Created At</th>
                                 <th>Actions</th>
@@ -455,7 +531,7 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
                         </thead>
                         <tbody>
                             <?php if (empty($venue_bookings)): ?>
-                                <tr><td colspan="13" class="text-center">No venue bookings found.</td></tr>
+                                <tr><td colspan="10" class="text-center">No venue bookings found.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($venue_bookings as $booking): ?>
                                     <tr>
@@ -465,27 +541,20 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
                                         <td><?php echo htmlspecialchars($booking['user_phone']); ?></td>
                                         <td><?php echo htmlspecialchars($booking['venue_name']); ?></td>
                                         <td><?php echo htmlspecialchars($booking['event_date']); ?></td>
-                                        <td><?php echo htmlspecialchars($booking['guests']); ?></td>
-                                        <td><?php echo htmlspecialchars($booking['duration_hours']); ?></td>
                                         <td><?php echo nl2br(htmlspecialchars($booking['special_requirements'])); ?></td>
-                                        <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
                                         <td>
                                             <?php 
                                             $status = strtolower($booking['status']);
-                                            if (in_array($booking['booking_type'], ['Photographer', 'Venue'])) {
-                                                if ($status === 'pending') {
-                                                    echo '<span class="badge bg-warning text-dark">Pending</span>';
-                                                } elseif ($status === 'confirmed') {
-                                                    echo '<span class="badge bg-success">Confirmed</span>';
-                                                } elseif ($status === 'cancelled') {
-                                                    echo '<span class="badge bg-danger">Cancelled</span>';
-                                                } elseif ($status === 'completed') {
-                                                    echo '<span class="badge bg-primary">Completed</span>';
-                                                } else {
-                                                    echo '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
-                                                }
+                                            if ($status === 'pending') {
+                                                echo '<span class="badge bg-warning text-dark">Pending</span>';
+                                            } elseif ($status === 'confirmed') {
+                                                echo '<span class="badge bg-success">Confirmed</span>';
+                                            } elseif ($status === 'cancelled') {
+                                                echo '<span class="badge bg-danger">Cancelled</span>';
+                                            } elseif ($status === 'completed') {
+                                                echo '<span class="badge bg-primary">Completed</span>';
                                             } else {
-                                                echo 'N/A';
+                                                echo '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
                                             }
                                             ?>
                                         </td>
@@ -527,10 +596,428 @@ if ($res && $row = mysqli_fetch_assoc($res)) $booking_count += (int)$row['total'
                                                 <?php elseif ($status === 'cancelled'): ?>
                                                     <span class="text-warning">Cancelled</span>
                                                 <?php endif; ?>
-                                                <!-- Delete button for venue booking -->
                                                 <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this booking?');">
-                                                    <input type="hidden" name="delete_venue_booking" value="1">
-                                                    <input type="hidden" name="venue_booking_id" value="<?php echo $booking['id']; ?>">
+                                                    <input type="hidden" name="delete_booking" value="1">
+                                                    <input type="hidden" name="delete_id" value="<?php echo $booking['id']; ?>">
+                                                    <input type="hidden" name="delete_type" value="Venue">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Booked Events table -->
+                <div class="table-responsive">
+                    <h4 class="mt-4">Booked Events</h4>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Event Name</th>
+                                <th>Ticket Quantity</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Payment Method</th>
+                                <th>Created At</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($event_bookings)): ?>
+                                <tr><td colspan="10" class="text-center">No event bookings found.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($event_bookings as $booking): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($booking['id']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['event_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['ticket_quantity']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['full_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['phone']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['created_at']); ?></td>
+                                        <td>
+                                            <?php 
+                                            $status = isset($booking['status']) ? strtolower($booking['status']) : 'pending';
+                                            if ($status === 'pending') {
+                                                echo '<span class="badge bg-warning text-dark">Pending</span>';
+                                            } elseif ($status === 'confirmed') {
+                                                echo '<span class="badge bg-success">Confirmed</span>';
+                                            } elseif ($status === 'cancelled') {
+                                                echo '<span class="badge bg-danger">Cancelled</span>';
+                                            } elseif ($status === 'completed') {
+                                                echo '<span class="badge bg-primary">Completed</span>';
+                                            } else {
+                                                echo '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
+                                            }
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-row align-items-center gap-2">
+                                                <?php if ($status === 'pending'): ?>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="event_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="event_new_status" value="confirmed">
+                                                        <button type="submit" class="btn btn-fab btn-fab-confirm" title="Confirm" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="event_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="event_new_status" value="cancelled">
+                                                        <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($status === 'confirmed'): ?>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="event_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="event_new_status" value="completed">
+                                                        <button type="submit" class="btn btn-complete-booking">
+                                                            <i class="fas fa-lock me-2"></i> COMPLETE BOOKING
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="event_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="event_new_status" value="cancelled">
+                                                        <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($status === 'completed'): ?>
+                                                    <span class="text-success">Done</span>
+                                                <?php elseif ($status === 'cancelled'): ?>
+                                                    <span class="text-warning">Cancelled</span>
+                                                <?php endif; ?>
+                                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this booking?');">
+                                                    <input type="hidden" name="delete_booking" value="1">
+                                                    <input type="hidden" name="delete_id" value="<?php echo $booking['id']; ?>">
+                                                    <input type="hidden" name="delete_type" value="Event">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php elseif ($type_filter === 'photographer'): ?>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>ID</th>
+                                <th>User Name</th>
+                                <th>User Email</th>
+                                <th>User Phone</th>
+                                <th>Service Type</th>
+                                <th>Professional</th>
+                                <th>Preferred Date</th>
+                                <th>Additional Details</th>
+                                <th>Booking Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($bookings)): ?>
+                                <tr><td colspan="12" class="text-center">No bookings found.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($bookings as $booking): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($booking['booking_type']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['id']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['name']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['phone']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['service_type']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['professional'] ?? 'N/A'); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['preferred_date']); ?></td>
+                                        <td><?php echo nl2br(htmlspecialchars($booking['additional_details'])); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['booked_at']); ?></td>
+                                        <td>
+                                            <?php 
+                                            $status = strtolower($booking['status']);
+                                            if (isset($booking['booking_type']) && in_array($booking['booking_type'], ['Photographer', 'Venue'])) {
+                                                if ($status === 'pending') {
+                                                    echo '<span class="badge bg-warning text-dark">Pending</span>';
+                                                } elseif ($status === 'confirmed') {
+                                                    echo '<span class="badge bg-success">Confirmed</span>';
+                                                } elseif ($status === 'cancelled') {
+                                                    echo '<span class="badge bg-danger">Cancelled</span>';
+                                                } elseif ($status === 'completed') {
+                                                    echo '<span class="badge bg-primary">Completed</span>';
+                                                } else {
+                                                    echo '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
+                                                }
+                                            } else {
+                                                echo 'N/A';
+                                            }
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php if (isset($booking['booking_type']) && $booking['booking_type'] === 'Photographer') {
+                                                $status = strtolower($booking['status']); ?>
+                                                <div class="d-flex flex-row align-items-center gap-2">
+                                                    <?php if ($status === 'pending'): ?>
+                                                        <form method="POST" style="display:inline;">
+                                                            <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
+                                                            <input type="hidden" name="new_status" value="confirmed">
+                                                            <button type="submit" class="btn btn-fab btn-fab-confirm" title="Confirm" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                        </form>
+                                                        <form method="POST" style="display:inline;">
+                                                            <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
+                                                            <input type="hidden" name="new_status" value="cancelled">
+                                                            <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                                <i class="fas fa-ban"></i>
+                                                            </button>
+                                                        </form>
+                                                    <?php elseif ($status === 'confirmed'): ?>
+                                                        <form method="POST" style="display:inline;">
+                                                            <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
+                                                            <input type="hidden" name="new_status" value="completed">
+                                                            <button type="submit" class="btn btn-complete-booking">
+                                                                <i class="fas fa-lock me-2"></i> COMPLETE BOOKING
+                                                            </button>
+                                                        </form>
+                                                        <form method="POST" style="display:inline;">
+                                                            <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
+                                                            <input type="hidden" name="new_status" value="cancelled">
+                                                            <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                                <i class="fas fa-ban"></i>
+                                                            </button>
+                                                        </form>
+                                                    <?php elseif ($status === 'completed'): ?>
+                                                        <span class="text-success">Done</span>
+                                                    <?php elseif ($status === 'cancelled'): ?>
+                                                        <span class="text-warning">Cancelled</span>
+                                                    <?php endif; ?>
+                                                    <!-- Delete button for photographer booking -->
+                                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this booking?');">
+                                                        <input type="hidden" name="delete_booking" value="1">
+                                                        <input type="hidden" name="delete_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="delete_type" value="Photographer">
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                                    </form>
+                                                </div>
+                                            <?php } else { ?>
+                                                <div class="d-flex flex-row align-items-center gap-2">
+                                                    N/A
+                                                    <!-- Delete button for general booking -->
+                                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this booking?');">
+                                                        <input type="hidden" name="delete_booking" value="1">
+                                                        <input type="hidden" name="delete_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="delete_type" value="Venues">
+                                                        <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                                    </form>
+                                                </div>
+                                            <?php } ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php elseif ($type_filter === 'venue'): ?>
+                <div class="table-responsive">
+                    <h4 class="mt-4">Venue Bookings</h4>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User Name</th>
+                                <th>User Email</th>
+                                <th>User Phone</th>
+                                <th>Venue Name</th>
+                                <th>Event Date</th>
+                                <th>Special Requirements</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($venue_bookings)): ?>
+                                <tr><td colspan="10" class="text-center">No venue bookings found.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($venue_bookings as $booking): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($booking['id']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['user_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['user_email']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['user_phone']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['venue_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['event_date']); ?></td>
+                                        <td><?php echo nl2br(htmlspecialchars($booking['special_requirements'])); ?></td>
+                                        <td>
+                                            <?php 
+                                            $status = strtolower($booking['status']);
+                                            if ($status === 'pending') {
+                                                echo '<span class="badge bg-warning text-dark">Pending</span>';
+                                            } elseif ($status === 'confirmed') {
+                                                echo '<span class="badge bg-success">Confirmed</span>';
+                                            } elseif ($status === 'cancelled') {
+                                                echo '<span class="badge bg-danger">Cancelled</span>';
+                                            } elseif ($status === 'completed') {
+                                                echo '<span class="badge bg-primary">Completed</span>';
+                                            } else {
+                                                echo '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
+                                            }
+                                            ?>
+                                        </td>
+                                        <td><?php echo htmlspecialchars($booking['created_at']); ?></td>
+                                        <td>
+                                            <div class="d-flex flex-row align-items-center gap-2">
+                                                <?php if ($status === 'pending'): ?>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="venue_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="venue_new_status" value="confirmed">
+                                                        <button type="submit" class="btn btn-fab btn-fab-confirm" title="Confirm" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="venue_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="venue_new_status" value="cancelled">
+                                                        <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($status === 'confirmed'): ?>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="venue_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="venue_new_status" value="completed">
+                                                        <button type="submit" class="btn btn-complete-booking">
+                                                            <i class="fas fa-lock me-2"></i> COMPLETE BOOKING
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="venue_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="venue_new_status" value="cancelled">
+                                                        <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($status === 'completed'): ?>
+                                                    <span class="text-success">Done</span>
+                                                <?php elseif ($status === 'cancelled'): ?>
+                                                    <span class="text-warning">Cancelled</span>
+                                                <?php endif; ?>
+                                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this booking?');">
+                                                    <input type="hidden" name="delete_booking" value="1">
+                                                    <input type="hidden" name="delete_id" value="<?php echo $booking['id']; ?>">
+                                                    <input type="hidden" name="delete_type" value="Venue">
+                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php elseif ($type_filter === 'event'): ?>
+                <div class="table-responsive">
+                    <h4 class="mt-4">Booked Events</h4>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Event Name</th>
+                                <th>Ticket Quantity</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Payment Method</th>
+                                <th>Created At</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($event_bookings)): ?>
+                                <tr><td colspan="10" class="text-center">No event bookings found.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($event_bookings as $booking): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($booking['id']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['event_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['ticket_quantity']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['full_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['phone']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['payment_method']); ?></td>
+                                        <td><?php echo htmlspecialchars($booking['created_at']); ?></td>
+                                        <td>
+                                            <?php 
+                                            $status = isset($booking['status']) ? strtolower($booking['status']) : 'pending';
+                                            if ($status === 'pending') {
+                                                echo '<span class="badge bg-warning text-dark">Pending</span>';
+                                            } elseif ($status === 'confirmed') {
+                                                echo '<span class="badge bg-success">Confirmed</span>';
+                                            } elseif ($status === 'cancelled') {
+                                                echo '<span class="badge bg-danger">Cancelled</span>';
+                                            } elseif ($status === 'completed') {
+                                                echo '<span class="badge bg-primary">Completed</span>';
+                                            } else {
+                                                echo '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
+                                            }
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-row align-items-center gap-2">
+                                                <?php if ($status === 'pending'): ?>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="event_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="event_new_status" value="confirmed">
+                                                        <button type="submit" class="btn btn-fab btn-fab-confirm" title="Confirm" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="event_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="event_new_status" value="cancelled">
+                                                        <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($status === 'confirmed'): ?>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="event_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="event_new_status" value="completed">
+                                                        <button type="submit" class="btn btn-complete-booking">
+                                                            <i class="fas fa-lock me-2"></i> COMPLETE BOOKING
+                                                        </button>
+                                                    </form>
+                                                    <form method="POST" style="display:inline;">
+                                                        <input type="hidden" name="event_booking_id" value="<?php echo $booking['id']; ?>">
+                                                        <input type="hidden" name="event_new_status" value="cancelled">
+                                                        <button type="submit" class="btn btn-fab btn-fab-cancel" title="Cancel" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    </form>
+                                                <?php elseif ($status === 'completed'): ?>
+                                                    <span class="text-success">Done</span>
+                                                <?php elseif ($status === 'cancelled'): ?>
+                                                    <span class="text-warning">Cancelled</span>
+                                                <?php endif; ?>
+                                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this booking?');">
+                                                    <input type="hidden" name="delete_booking" value="1">
+                                                    <input type="hidden" name="delete_id" value="<?php echo $booking['id']; ?>">
+                                                    <input type="hidden" name="delete_type" value="Event">
                                                     <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash-alt"></i></button>
                                                 </form>
                                             </div>

@@ -45,6 +45,31 @@ if ($res) {
         $event_types[$row['type']] = (int)$row['count'];
     }
 }
+
+// --- BEGIN: Amount Per Day Calculation ---
+$amount_per_day = [];
+// Venue bookings (join with venues for price)
+$res = mysqli_query($db, "SELECT vb.event_date AS day, v.price AS price FROM venue_bookings vb JOIN venues v ON vb.venue_id = v.id WHERE vb.event_date IS NOT NULL");
+if ($res) {
+    while ($row = mysqli_fetch_assoc($res)) {
+        $day = $row['day'];
+        $price = floatval($row['price']);
+        if (!isset($amount_per_day[$day])) $amount_per_day[$day] = 0;
+        $amount_per_day[$day] += $price;
+    }
+}
+// Photographer bookings (join with photographers for price)
+$res = mysqli_query($db, "SELECT b.preferred_date AS day, p.price AS price FROM photographer_bookings b JOIN photographers p ON b.professional_id = p.id WHERE b.preferred_date IS NOT NULL");
+if ($res) {
+    while ($row = mysqli_fetch_assoc($res)) {
+        $day = $row['day'];
+        $price = floatval($row['price']);
+        if (!isset($amount_per_day[$day])) $amount_per_day[$day] = 0;
+        $amount_per_day[$day] += $price;
+    }
+}
+// General bookings (if they reference events or venues, you can join as needed; here, we skip if no price info)
+// --- END: Amount Per Day Calculation ---
 ?>
 
 <?php include __DIR__ . '/../includes/admin_header.php'; ?>
@@ -108,8 +133,8 @@ if ($res) {
                 <div class="col-lg-8 mb-4">
                     <div class="card h-100">
                         <div class="card-body">
-                            <h5 class="card-title">Events Per Hour</h5>
-                            <canvas id="eventsPerHourChart" height="120"></canvas>
+                            <h5 class="card-title">Amount Per Day</h5>
+                            <canvas id="amountPerDayChart" height="120"></canvas>
                         </div>
                     </div>
                 </div>
@@ -130,22 +155,19 @@ if ($res) {
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Events per hour data from PHP
-const eventsPerHour = <?php echo json_encode(array_values($events_per_hour)); ?>;
-const hourLabels = [...Array(24).keys()].map(h => h.toString().padStart(2, '0')+':00');
-// Event types data from PHP
-const eventTypes = <?php echo json_encode(array_keys($event_types)); ?>;
-const eventTypeCounts = <?php echo json_encode(array_values($event_types)); ?>;
-// Line Chart: Events per hour
-new Chart(document.getElementById('eventsPerHourChart').getContext('2d'), {
+// Amount per day data from PHP
+const amountPerDayLabels = <?php echo json_encode(array_keys($amount_per_day)); ?>;
+const amountPerDayCounts = <?php echo json_encode(array_values($amount_per_day)); ?>;
+// Line Chart: Amount per day
+new Chart(document.getElementById('amountPerDayChart').getContext('2d'), {
     type: 'line',
     data: {
-        labels: hourLabels,
+        labels: amountPerDayLabels,
         datasets: [{
-            label: 'Events',
-            data: eventsPerHour,
-            backgroundColor: 'rgba(79,70,229,0.1)',
-            borderColor: 'rgba(79,70,229,1)',
+            label: 'Total Amount',
+            data: amountPerDayCounts,
+            backgroundColor: 'rgba(16,185,129,0.1)',
+            borderColor: 'rgba(16,185,129,1)',
             borderWidth: 2,
             tension: 0.4,
             fill: true
@@ -159,6 +181,9 @@ new Chart(document.getElementById('eventsPerHourChart').getContext('2d'), {
         }
     }
 });
+// Event types data from PHP
+const eventTypes = <?php echo json_encode(array_keys($event_types)); ?>;
+const eventTypeCounts = <?php echo json_encode(array_values($event_types)); ?>;
 // Doughnut Chart: Event types
 new Chart(document.getElementById('eventTypesChart').getContext('2d'), {
     type: 'doughnut',

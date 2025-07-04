@@ -15,6 +15,10 @@ require_once __DIR__ . '/../config/session_config.php';
     </style>
 </head>
 <body>
+    <!-- Background Video -->
+    <video autoplay loop muted playsinline id="bg-video" style="position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:-2;"><source src="../assets/videos/sliderVideo2.mp4" type="video/mp4"></video>
+    <!-- Overlay for contrast -->
+    <div style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.35);z-index:-1;"></div>
     <div class="login-container">
         <h2 class="text-center mb-4">Admin Login</h2>
         <!-- Optional: Display login error messages here -->

@@ -124,24 +124,21 @@ if(isset($_SESSION['message'])) {
 
 ?>
 
-<?php include __DIR__ . '/../../includes/header.php'; ?>
+<?php include __DIR__ . '/../../includes/admin_header.php'; ?>
 
 <div class="container-fluid">
     <div class="row">
         <?php include __DIR__ . '/../../includes/sidebar.php'; ?>
-
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 mt-5">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
                 <h1 class="h2">Add New Venue</h1>
             </div>
-
             <?php if($message): ?>
                 <div class="alert alert-<?php echo $message_type; ?> alert-dismissible fade show" role="alert">
                     <?php echo $message; ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
-
             <div class="modern-card">
                 <div class="card-body">
                     <form action="add_venue.php" method="POST" enctype="multipart/form-data">

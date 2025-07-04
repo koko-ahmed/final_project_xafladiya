@@ -27,7 +27,7 @@ body {
 
 /* Modern UI Elements */
 .modern-card {
-    background-color: #7c7c7c;
+    background-color: #f8f9fa;
     border-radius: 16px;
     padding: 30px;
     box-shadow: var(--modern-shadow);
