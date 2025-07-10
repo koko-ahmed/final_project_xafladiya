@@ -11,7 +11,7 @@ include '../includes/header.php';
     min-height: 100vh;
   }
   .login-card {
-    background: rgba(255,255,255,0.95);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 16px;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     backdrop-filter: blur(2px);
@@ -42,10 +42,13 @@ include '../includes/header.php';
                         </div>
                        
                         <div class="d-grid">
-                        <button type="submit" style="background-color: red; color: white; border: none;" class="btn">Login</button>
+                        <button type="submit" style="background-color: purple; color: white; border: none;" class="btn">Login</button>
 
                         </div>
-                        <p class="text-center mt-3">Don't have an account? <a href="register.php">Register here</a></p>
+                        <p class="text-center mt-3">
+  Don't have an account? <a href="register.php" style="color: #f1c40f;">Register here</a>
+</p>
+
                     </form>
                 </div>
             </div>

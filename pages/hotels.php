@@ -83,7 +83,7 @@ if (isset($_GET['book'])):
   <div class="custom-modal-content">
     <a href="hotels.php" class="custom-modal-close">&times;</a>
     <h2>Book Your Stay</h2>
-    <form action="process_venue_booking.php" method="POST">
+    <form id="venueBookingForm" action="process_venue_booking.php" method="POST">
       <input type="hidden" name="venue_id" value="<?php echo $venue_id; ?>">
       <input type="hidden" name="venue_name" value="<?php echo $venue_name; ?>">
       <div class="mb-3">
@@ -100,7 +100,10 @@ if (isset($_GET['book'])):
       </div>
       <div class="mb-3">
         <label for="event_date" class="form-label">Event Date</label>
-        <input type="date" class="form-control" name="event_date" id="event_date" required>
+        <div class="input-group">
+          <input type="date" class="form-control" name="event_date" id="event_date" required>
+        </div>
+        <div id="availabilityMessage" class="mt-2"></div>
       </div>
       <div class="mb-3">
         <label for="guests" class="form-label">Number of Guests</label>

@@ -6,6 +6,7 @@ if (empty($cart)) {
     exit;
 }
 $total = 0;
+echo '<div class="cart-section-bg p-4 rounded">';
 echo '<ul class="list-group">';
 foreach ($cart as $key => $item) {
     echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
@@ -24,4 +25,5 @@ foreach ($cart as $key => $item) {
 }
 
 echo '</ul>';
-echo '<div class="mt-3 text-end fw-bold">Total: $' . number_format($total, 2) . '</div>'; 
+echo '<div class="mt-3 text-end fw-bold">Total: $' . number_format($total, 2) . '</div>';
+echo '</div>'; 

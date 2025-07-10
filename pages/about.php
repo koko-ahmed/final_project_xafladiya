@@ -59,7 +59,7 @@ include '../includes/header.php';
 
 <!-- Our Story Section -->
 <section class="py-5">
-  <div class="container">
+  <div class="container style="color: #6a0dad;">
     <div class="row align-items-center">
       <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
         <h2 class="display-5 fw-bold mb-4">Our Story</h2>
@@ -165,44 +165,47 @@ include '../includes/header.php';
 </section>
 
 <!-- Our Values Section with Animated Cards -->
-<section class="modern-section-alt py-5" style="background-color: var(--card-bg-2); color: var(--light-color)">
-  <div class="container">
+<section class="modern-section-alt py-5" style="background-color: #6a0dad; color: white;">
+
+  <div class="container" style="color: #6a0dad;">
     <div class="text-center mb-5">
-      <h2 class="modern-title text-white">Our Values</h2>
+      <h2 class="modern-title" style="color:rgb(255, 255, 255);">Our Values</h2>
       <div class="modern-divider modern-divider-center"></div>
-      <p class="text-white mb-4">The principles that guide our work</p>
+      <p class="mb-4" style="color:rgb(255, 255, 255);">The principles that guide our work</p>
     </div>
     <div class="row g-4">
       <div class="col-md-4">
         <div class="modern-card h-100">
           <div class="text-center mb-4">
-            <i class="fas fa-handshake fa-3x modern-icon"></i>
+            <i class="fas fa-handshake fa-3x modern-icon" style="color: #6a0dad;"></i>
           </div>
-          <h3 class="modern-title text-center mb-3">Trust & Reliability</h3>
-          <p class="modern-text text-center">We believe in building trust through reliability and consistency in our services. Our customers can always count on us to deliver excellence.</p>
+          <h3 class="modern-title text-center mb-3" style="color: #6a0dad;">Trust & Reliability</h3>
+          <p class="modern-text text-center" style="color: #6a0dad;">We believe in building trust through reliability and consistency in our services. Our customers can always count on us to deliver excellence.</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="modern-card h-100">
           <div class="text-center mb-4">
-            <i class="fas fa-star fa-3x modern-icon"></i>
+            <i class="fas fa-star fa-3x modern-icon" style="color: #6a0dad;"></i>
           </div>
-          <h3 class="modern-title text-center mb-3">Excellence</h3>
-          <p class="modern-text text-center">We strive for excellence in every aspect of our platform and customer service. We're constantly innovating to provide the best experience possible.</p>
+          <h3 class="modern-title text-center mb-3" style="color: #6a0dad;">Excellence</h3>
+          <p class="modern-text text-center" style="color: #6a0dad;">We strive for excellence in every aspect of our platform and customer service. We're constantly innovating to provide the best experience possible.</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="modern-card h-100">
           <div class="text-center mb-4">
-            <i class="fas fa-users fa-3x modern-icon"></i>
+            <i class="fas fa-users fa-3x modern-icon" style="color: #6a0dad;"></i>
           </div>
-          <h3 class="modern-title text-center mb-3">Community</h3>
-          <p class="modern-text text-center">We're deeply committed to the Somali community and understand the cultural significance of the events we help organize.</p>
+          <h3 class="modern-title text-center mb-3" style="color: #6a0dad;">Community</h3>
+          <p class="modern-text text-center" style="color: #6a0dad;">We're deeply committed to the Somali community and understand the cultural significance of the events we help organize.</p>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+
 
 <?php include '../includes/footer.php'; ?>
 

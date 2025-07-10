@@ -10,3 +10,39 @@ POST: Array
     [message] => hey
 )
 
+Handler called at 2025-07-05 18:59:59
+POST: Array
+(
+    [name] => ina ahmed
+    [email] => kawsarkaaba37@gmail.com
+    [phone] => 907569914
+    [service] => photography
+    [professional] => 8
+    [date] => 2025-07-17
+    [message] => 3 days
+)
+
+Handler called at 2025-07-09 18:25:01
+POST: Array
+(
+    [name] => aisha mxmd
+    [email] => kawsarkaaba37@gmail.com
+    [phone] => 907569914
+    [service] => videography
+    [professional] => 10
+    [date] => 2025-08-01
+    [message] => nothing
+)
+
+Handler called at 2025-07-10 15:59:24
+POST: Array
+(
+    [name] => Jaamac farah
+    [email] => Kawsarladan2024@gmail.com
+    [phone] => 907569914
+    [service] => photography
+    [professional] => 10
+    [date] => 2025-07-10
+    [message] => no
+)
+
